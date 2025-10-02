@@ -3,8 +3,10 @@ import apiClient from "../services/apiClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "../Validation/Validate.js";
+import { useAuthStore } from "../store/authStore.js";
 
 function Login() {
+const { userLogin, isSingIn } = useAuthStore()
   const {
     register,
     handleSubmit,
