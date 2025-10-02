@@ -24,13 +24,13 @@ export const sendEmail = async (options) => {
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: "gohelbhargav401@gmail.com",
-        pass: "aqknaoglmxclkvct",
+        user: process.env.SMTP_USER || '',
+        pass: process.env.SMTP_PASSWORD || '',
       },
     });
 
     const mailConfig = {
-      from: "gohelbhargav401@gmail.com",
+      from: process.env.SMTP_USER || '',
       to: options.email,
       subject: options.subject,
       text: emailText,
