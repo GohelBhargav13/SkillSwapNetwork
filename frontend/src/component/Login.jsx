@@ -18,6 +18,7 @@ const { userLogin, isSingIn } = useAuthStore()
   // check the data
   const onSubmit = async (data) => {
     try {
+      await userLogin(data)
       console.log(data);
     } catch (error) {
       console.error(error);
@@ -85,10 +86,9 @@ const { userLogin, isSingIn } = useAuthStore()
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={isSingIn}
               className="btn btn-primary w-full text-white text-lg font-semibold mt-2 hover:btn-secondary"
             >
-              {loading ? "Logging..." : "Login"}
             </button>
           </form>
 

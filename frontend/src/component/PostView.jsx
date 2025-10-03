@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import apiClient from "../services/apiClient";
 import { Swiper, SwiperSlide } from "swiper/react"; // fro the image sliding
-import { toast, ToastContainer } from "react-toastify";
 
 
 // Import Swiper styles
@@ -90,7 +89,6 @@ function PostView() {
 
   return (
     <div>
-      <ToastContainer position="bottom-left" />
       {loading ? (
         <span className="loading loading-infinity loading-xl"></span>
       ) : (

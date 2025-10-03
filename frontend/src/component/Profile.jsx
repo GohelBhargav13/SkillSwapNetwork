@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import apiClient from "../services/apiClient";
 import { useNavigate } from "react-router";
-import { toast,ToastContainer } from "react-toastify"
 
 
 function Profile() {
@@ -55,7 +54,6 @@ const navigate = useNavigate();
 
   return (
     <div className="border-2 bg-blue-300">
-    <ToastContainer />
       {loading ? (
         <span className="loading loading-infinity loading-xl"></span>
       ) : (
