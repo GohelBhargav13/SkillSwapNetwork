@@ -29,15 +29,16 @@ const App = () => {
     <div>
       <Toaster />
       <Routes>
-        <Route 
-        path="/home" 
-        element={authUser ? <PostView /> : <Login />} />
+        <Route path="/home" element={authUser ? <PostView /> : <Login />} />
         <Route
           path="/login"
           element={!authUser ? <Login /> : <Navigate to={"/home"} />}
         />
         <Route path="/home" element={!authUser ? <Login /> : <PostView />} />
-        <Route path="/profile" element={!authUser ? <Login /> : <Profile />} />
+        <Route
+          path="/profile"
+          element={authUser ? <Profile /> : <Login />}
+        />
       </Routes>
     </div>
   );
