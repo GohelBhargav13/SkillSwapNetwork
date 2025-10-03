@@ -7,8 +7,11 @@ import { Link } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail, Loader2, BrainCircuit } from "lucide-react";
 
 function Login() {
+
   let [showPassword, setShowPassword] = useState(false);
   const { userLogin, isSingIn } = useAuthStore();
+
+  // Validate the data using a zod schema and react hook form
   const {
     register,
     handleSubmit,
@@ -37,7 +40,7 @@ function Login() {
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                 <BrainCircuit className="text-primary group-hover:text-primary transition-colors" />
               </div>
-              <h1 className="text-2xl font-bold mt-2">Welcome </h1>
+              <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
               <p className="text-base-content/60">Sign Up to your account</p>
             </div>
           </div>

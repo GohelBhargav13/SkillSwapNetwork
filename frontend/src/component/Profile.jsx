@@ -1,12 +1,7 @@
-import React, { useEffect, useState } from "react";
-import apiClient from "../services/apiClient";
-import { useNavigate } from "react-router";
-import { toast } from "react-hot-toast";
 import { useAuthStore } from "../store/authStore";
 
 
 function Profile() {
-
   const { authUser,userLogout } = useAuthStore();
 
   //Handel Logout Functionality
