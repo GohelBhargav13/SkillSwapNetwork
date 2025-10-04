@@ -1,9 +1,20 @@
-import React from "react";
-import { useAuthStore } from "../store/authStore.js"
+import React, { useEffect } from "react";
+import { useAuthStore } from "../store/authStore.js";
+import { userLeaderBoardStore } from "../store/leaderBoard.js";
 import LeaderBoard from "../component/Post/LeaderBoard.jsx";
 
 const Firstpage = () => {
-    const { authUser } = useAuthStore();
+  const { authUser } = useAuthStore();
+
+  // Destructure leaderboard state and actions from the store
+  const { isFetch, LeaderBoardDataFetch, fetchLeaderBoard } =
+    userLeaderBoardStore();
+
+    // fetch leaderboard data on component mount
+  useEffect(() => {
+    fetchLeaderBoard();
+  }, [fetchLeaderBoard]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -13,13 +24,24 @@ const Firstpage = () => {
             <div className="flex flex-col items-center">
               <div className="avatar mb-3">
                 <div className="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                  <img src={authUser?.image || "https://placeimg.com/192/192/people"} alt="User avatar" />
+                  <img
+                    src={
+                      authUser?.image || "https://placeimg.com/192/192/people"
+                    }
+                    alt="User avatar"
+                  />
                 </div>
               </div>
               <h2 className="font-bold text-lg text-center">{authUser.name}</h2>
-              <div className="text-sm text-gray-600 mb-2 text-center">{authUser.headline}</div>
-              <div className="text-xs text-gray-500 text-center">{authUser.location}</div>
-              <div className="badge badge-outline badge-primary mt-2">{authUser.university}</div>
+              <div className="text-sm text-gray-600 mb-2 text-center">
+                {authUser.headline}
+              </div>
+              <div className="text-xs text-gray-500 text-center">
+                {authUser.location}
+              </div>
+              <div className="badge badge-outline badge-primary mt-2">
+                {authUser.university}
+              </div>
             </div>
             <div className="divider" />
             <div className="flex flex-col gap-2">
@@ -31,12 +53,22 @@ const Firstpage = () => {
                 <span>Post impressions</span>
                 <span className="font-bold text-primary">18</span>
               </div>
-              <button className="btn btn-warning btn-sm w-full mb-2">Try Premium for ₹0</button>
+              <button className="btn btn-warning btn-sm w-full mb-2">
+                Try Premium for ₹0
+              </button>
               <ul className="menu bg-base-200 rounded-box">
-                <li><a>Saved items</a></li>
-                <li><a>Groups</a></li>
-                <li><a>Newsletters</a></li>
-                <li><a>Events</a></li>
+                <li>
+                  <a>Saved items</a>
+                </li>
+                <li>
+                  <a>Groups</a>
+                </li>
+                <li>
+                  <a>Newsletters</a>
+                </li>
+                <li>
+                  <a>Events</a>
+                </li>
               </ul>
             </div>
           </div>
@@ -59,13 +91,19 @@ const Firstpage = () => {
               />
             </div>
             <div className="flex gap-3">
-              <button className="btn btn-outline btn-success btn-xs">Video</button>
-              <button className="btn btn-outline btn-primary btn-xs">Photo</button>
-              <button className="btn btn-outline btn-warning btn-xs">Write Article</button>
+              <button className="btn btn-outline btn-success btn-xs">
+                Video
+              </button>
+              <button className="btn btn-outline btn-primary btn-xs">
+                Photo
+              </button>
+              <button className="btn btn-outline btn-warning btn-xs">
+                Write Article
+              </button>
             </div>
           </div>
           {/* Posts List */}
-          {[1, 2].map(postId => (
+          {[1, 2].map((postId) => (
             <div key={postId} className="card bg-base-100 shadow p-5">
               <div className="flex gap-3 items-center mb-2">
                 <div className="avatar">
@@ -74,22 +112,33 @@ const Firstpage = () => {
                   </div>
                 </div>
                 <div>
-                  <p className="font-semibold text-sm">Hitesh Choudhary <span className="badge badge-outline badge-info">Verified</span></p>
-                  <span className="text-xs text-gray-500">Retired corporate & full time YouTuber · 39m</span>
+                  <p className="font-semibold text-sm">
+                    Hitesh Choudhary{" "}
+                    <span className="badge badge-outline badge-info">
+                      Verified
+                    </span>
+                  </p>
+                  <span className="text-xs text-gray-500">
+                    Retired corporate & full time YouTuber · 39m
+                  </span>
                 </div>
               </div>
               <p className="mb-3">
-                Example post content here. You can render actual post data from your database or component.
+                Example post content here. You can render actual post data from
+                your database or component.
               </p>
               <div className="rounded-lg overflow-hidden">
-                <img src="https://via.placeholder.com/600x300?text=Post+Image" alt="Post" />
+                <img
+                  src="https://via.placeholder.com/600x300?text=Post+Image"
+                  alt="Post"
+                />
               </div>
             </div>
           ))}
         </main>
 
         {/* Right: Leaderboard */}
-        <LeaderBoard />
+        <LeaderBoard isFetch={isFetch} leaderBoardData={LeaderBoardDataFetch} />
       </div>
     </div>
   );

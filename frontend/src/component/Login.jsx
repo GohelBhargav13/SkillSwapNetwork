@@ -113,7 +113,7 @@ function Login() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="btn btn-primary w-full"
+              className={`btn btn-primary w-full ${isSingIn ? "cursor-not-allowed" : ""}`}
               disabled={isSingIn}
             >
               {isSingIn ? (
