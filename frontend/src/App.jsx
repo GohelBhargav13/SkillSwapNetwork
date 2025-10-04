@@ -9,6 +9,7 @@ import Login from "./component/Login";
 import PostView from "./component/PostView";
 import Profile from "./component/Profile";
 import Layout from "./layout/Layout";
+import Firstpage from "./pages/Firstpage";
 
 const App = () => {
   const { isChecking, checkinRoute, authUser } = useAuthStore();
@@ -33,6 +34,7 @@ const App = () => {
         <Route path="/" element={authUser ? <Layout /> : <Navigate to="/login" />}>
           <Route path="home" element={<PostView />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="postview" element={ <Firstpage /> } />
         </Route>
         {/* Redirect unknown routes */}
         <Route path="*" element={<Navigate to={authUser ? "/home" : "/login"} />} />

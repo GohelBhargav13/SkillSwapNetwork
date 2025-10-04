@@ -2,16 +2,9 @@ import { useAuthStore } from "../store/authStore";
 
 
 function Profile() {
-  const { authUser,userLogout } = useAuthStore();
+  const { authUser } = useAuthStore();
 
   //Handel Logout Functionality
-  const logOut = async() => {
-    try {
-      await userLogout();
-    } catch (error) {
-      console.log("Error in Logout : ",error)
-    }
-  }
 
   return (
     <div className="border-2 bg-blue-300">
@@ -24,7 +17,6 @@ function Profile() {
               <img src={authUser?.user_avatar}  alt="User"/>
             </div>
           </div>
-          <button className="btn btn-primary" onClick={logOut}>logout</button>
         </>
     </div>
   );

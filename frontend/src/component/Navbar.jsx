@@ -41,7 +41,7 @@ const Navbar = () => {
             </a>
           </li>
           <li>
-            <a className="flex flex-col items-center">
+            <a className="flex flex-col items-center" onClick={() => Navigate("/postview")}>
               <span className="material-icons">My Network</span>
             </a>
           </li>
