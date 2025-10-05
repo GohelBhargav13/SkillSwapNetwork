@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useAuthStore } from "../store/authStore.js";
 import { userLeaderBoardStore } from "../store/leaderBoard.js";
 import LeaderBoard from "../component/Post/LeaderBoard.jsx";
+import PostView from "../component/PostView.jsx";
 
 const Firstpage = () => {
   const { authUser } = useAuthStore();
@@ -10,16 +11,17 @@ const Firstpage = () => {
   const { isFetch, LeaderBoardDataFetch, fetchLeaderBoard } =
     userLeaderBoardStore();
 
-    // fetch leaderboard data on component mount
+  // fetch leaderboard data on component mount
   useEffect(() => {
     fetchLeaderBoard();
   }, [fetchLeaderBoard]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="max-w-[1360px] mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-[220px_1fr_320px] gap-10">
+      
         {/* Left: User Info */}
-        <aside className="hidden md:block">
+        <aside className="hidden md:block w-full max-w-[220px]">
           <div className="card bg-base-100 shadow-xl mb-4 p-5">
             <div className="flex flex-col items-center">
               <div className="avatar mb-3">
@@ -53,88 +55,20 @@ const Firstpage = () => {
                 <span>Post impressions</span>
                 <span className="font-bold text-primary">18</span>
               </div>
-              <button className="btn btn-warning btn-sm w-full mb-2">
-                Try Premium for ₹0
-              </button>
+               <div className="divider" />
               <ul className="menu bg-base-200 rounded-box">
-                <li>
-                  <a>Saved items</a>
-                </li>
-                <li>
-                  <a>Groups</a>
-                </li>
-                <li>
-                  <a>Newsletters</a>
-                </li>
-                <li>
-                  <a>Events</a>
-                </li>
+                <li className="p-2 justify-center">Create Post</li>
               </ul>
             </div>
           </div>
         </aside>
 
         {/* Center: Posts */}
-        <main className="col-span-1 md:col-span-1 flex flex-col gap-6">
-          {/* Post Creation Card */}
-          <div className="card bg-base-100 shadow p-4">
-            <div className="flex gap-2 items-center mb-2">
-              <div className="avatar">
-                <div className="w-10 rounded-full">
-                  <img src={authUser.image} alt="User avatar" />
-                </div>
-              </div>
-              <input
-                type="text"
-                placeholder="Start a post"
-                className="input input-bordered flex-1"
-              />
-            </div>
-            <div className="flex gap-3">
-              <button className="btn btn-outline btn-success btn-xs">
-                Video
-              </button>
-              <button className="btn btn-outline btn-primary btn-xs">
-                Photo
-              </button>
-              <button className="btn btn-outline btn-warning btn-xs">
-                Write Article
-              </button>
-            </div>
-          </div>
+        <main className="w-full flex flex-col gap-6 overflow-y-scroll h-[80vh] items-center">
           {/* Posts List */}
-          {[1, 2].map((postId) => (
-            <div key={postId} className="card bg-base-100 shadow p-5">
-              <div className="flex gap-3 items-center mb-2">
-                <div className="avatar">
-                  <div className="w-9 rounded-full">
-                    <img src={authUser.image} alt="" />
-                  </div>
-                </div>
-                <div>
-                  <p className="font-semibold text-sm">
-                    Hitesh Choudhary{" "}
-                    <span className="badge badge-outline badge-info">
-                      Verified
-                    </span>
-                  </p>
-                  <span className="text-xs text-gray-500">
-                    Retired corporate & full time YouTuber · 39m
-                  </span>
-                </div>
-              </div>
-              <p className="mb-3">
-                Example post content here. You can render actual post data from
-                your database or component.
-              </p>
-              <div className="rounded-lg overflow-hidden">
-                <img
-                  src="https://via.placeholder.com/600x300?text=Post+Image"
-                  alt="Post"
-                />
-              </div>
-            </div>
-          ))}
+          <div className="card bg-base-100 shadow p-5 w-full max-w-2xl">
+            <PostView />
+          </div>
         </main>
 
         {/* Right: Leaderboard */}
