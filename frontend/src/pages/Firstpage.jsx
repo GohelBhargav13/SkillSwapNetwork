@@ -3,6 +3,7 @@ import { useAuthStore } from "../store/authStore.js";
 import { userLeaderBoardStore } from "../store/leaderBoard.js";
 import LeaderBoard from "../component/Post/LeaderBoard.jsx";
 import PostView from "../component/PostView.jsx";
+import Button from "../component/StylesElements/Button.jsx";
 
 const Firstpage = () => {
   const { authUser } = useAuthStore();
@@ -19,8 +20,7 @@ const Firstpage = () => {
   return (
     <div className="max-w-[1360px] mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr_320px] gap-10">
-      
-        {/* Left: User Info */}
+        {/* Left: User Info  fetch from authUser */}
         <aside className="hidden md:block w-full max-w-[220px]">
           <div className="card bg-base-100 shadow-xl mb-4 p-5">
             <div className="flex flex-col items-center">
@@ -55,9 +55,11 @@ const Firstpage = () => {
                 <span>Post impressions</span>
                 <span className="font-bold text-primary">18</span>
               </div>
-               <div className="divider" />
+              <div className="divider" />
               <ul className="menu bg-base-200 rounded-box">
-                <li className="p-2 justify-center">Create Post</li>
+                <Button>
+                  <li className="p-2 justify-center">Create Post</li>
+                </Button>
               </ul>
             </div>
           </div>
@@ -65,13 +67,13 @@ const Firstpage = () => {
 
         {/* Center: Posts */}
         <main className="w-full flex flex-col gap-6 overflow-y-scroll h-[80vh] items-center">
-          {/* Posts List */}
+          {/* Posts List Come from the Postview */}
           <div className="card bg-base-100 shadow p-5 w-full max-w-2xl">
             <PostView />
           </div>
         </main>
 
-        {/* Right: Leaderboard */}
+        {/* Right: Leaderboard come from the Leaderboard */}
         <LeaderBoard isFetch={isFetch} leaderBoardData={LeaderBoardDataFetch} />
       </div>
     </div>
