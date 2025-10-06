@@ -1,7 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthStore } from "../store/authStore.js"
+import { axiosInstance } from "../libs/axios.js"
+import UserPost from "./Post/UserPost.jsx";
 const Profile = () => {
   const { authUser } = useAuthStore();
+  const [ userPosts,setUserPosts ] = useState([])
+  useEffect(() => {
+    try {
+
+      axiosInstance.get("/user/posts")
+      .then((res) => {
+        console.log(res.data.data)
+        setUserPosts(res.data.data)
+      })
+      .catch((err) => {
+        console.log("Error in fetch data : ", err)
+      })
+      
+    } catch (error) {
+        console.log("Error in the catch block of the user data fetch",error)
+    }
+  },[])
+
   return (
     <div className="max-w-5xl mx-auto bg-white rounded-md shadow-md overflow-hidden">
       
@@ -65,6 +85,7 @@ const Profile = () => {
 
       {/* Right side sections can be separate components */}
       {/* They can be placed in a sidebar as per your design */}
+      <UserPost userPosts={userPosts} />
     </div>
   );
 };
