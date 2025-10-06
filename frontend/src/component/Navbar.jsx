@@ -57,7 +57,7 @@ const Navbar = () => {
             </a>
           </li>
           <li>
-            <a className="flex flex-col items-center" onClick={() => Navigate("/postview")}>
+            <a className="flex flex-col items-center">
               <span className="material-icons">Group</span>
             </a>
           </li>

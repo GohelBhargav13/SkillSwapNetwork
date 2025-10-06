@@ -6,18 +6,22 @@ import { Loader } from "lucide-react";
 
 // Page Components
 import Login from "./component/Login";
-import PostView from "./component/PostView";
 import Profile from "./component/Profile";
 import Layout from "./layout/Layout";
 import Firstpage from "./pages/Firstpage";
+import PostCreate from "./pages/PostCreate";
 
 const App = () => {
+
+  // Destructure auth state and actions from the store
   const { isChecking, checkinRoute, authUser } = useAuthStore();
 
+  // Check authentication status on app load
   useEffect(() => {
     checkinRoute();
   }, [checkinRoute]);
 
+  // checking for the authentication status
   if (isChecking && !authUser) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -34,7 +38,7 @@ const App = () => {
         <Route path="/" element={authUser ? <Layout /> : <Navigate to="/login" />}>
           <Route path="home" element={<Firstpage />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="postview" element={ <Firstpage /> } />
+          <Route path="create-post" element={<PostCreate />} />
         </Route>
         {/* Redirect unknown routes */}
         <Route path="*" element={<Navigate to={authUser ? "/home" : "/login"} />} />
