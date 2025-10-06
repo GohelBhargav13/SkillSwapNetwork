@@ -5,7 +5,6 @@ const PostCreate = () => {
   return (
     <>
     <NewPostForm />
-    <div>PostCreate</div>
     </>
     
   )

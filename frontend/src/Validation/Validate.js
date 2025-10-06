@@ -20,11 +20,10 @@ export const LoginSchema = z.object({
 const FormValidation = {
     title:z.string().min(3,"Title must be at least 3 characters long"),
     description:z.string().min(10,"Description must be at least 10 characters long"),
-    post_image:z.array(z.instanceof(file)).min(1,"At least one image is required")
+    post_image:z.array(z.instanceof(File)).min(1,"At least one image is required") // for the images validation
 }
 
 export const postSchema = z.object({
     title:FormValidation.title,
     description:FormValidation.description,
-    post_image:FormValidation.post_image
 })
