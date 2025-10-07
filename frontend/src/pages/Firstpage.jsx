@@ -32,7 +32,7 @@ const Firstpage = () => {
                 <div className="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                   <img
                     src={
-                      authUser?.image || "../assets/user.png"
+                      authUser?.user_avatar || "../assets/user.png"
                     }
                     alt="User avatar"
                   />

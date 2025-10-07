@@ -10,6 +10,7 @@ import Profile from "./component/Profile";
 import Layout from "./layout/Layout";
 import Firstpage from "./pages/Firstpage";
 import PostCreate from "./pages/PostCreate";
+import UpdateProfile from "./pages/UpdateProfile";
 
 const App = () => {
 
@@ -39,6 +40,7 @@ const App = () => {
           <Route path="home" element={<Firstpage />} />
           <Route path="profile" element={<Profile />} />
           <Route path="create-post" element={<PostCreate />} />
+          <Route path="update-profile" element={<UpdateProfile /> } />
         </Route>
         {/* Redirect unknown routes */}
         <Route path="*" element={<Navigate to={authUser ? "/home" : "/login"} />} />

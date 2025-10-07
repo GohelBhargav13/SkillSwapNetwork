@@ -87,7 +87,7 @@ const Navbar = () => {
               >
                 <div className="w-8 rounded-full">
                   <img
-                    src={authUser?.image || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
+                    src={authUser?.user_avatar || "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"}
                     alt="Profile avatar"
                   />
                 </div>
