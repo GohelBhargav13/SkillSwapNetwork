@@ -10,16 +10,23 @@ const Profile = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [currentState,setCurrentState] = useState("post");
 
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    axiosInstance.get("/user/posts")
+    try {
+       axiosInstance.get("/user/posts")
       .then((res) => setUserPosts(res.data.data))
       .catch((err) => console.log("Error in fetch data : ", err));
+      
+    } catch (error) {
+        console.log(error)
+    }
+   
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto bg-white rounded-md shadow-md overflow-hidden">
+    <div className="max-w-5xl mx-auto bg-white rounded-md shadow-md overflow-hidden mt-[35px]">
       {/* Cover */}
       <div className="relative h-48 bg-black">
         <img
@@ -53,13 +60,13 @@ const Profile = () => {
           <button className="btn btn-primary" onClick={() => navigate("/create-post")}>Create Post</button>
           <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("request")}>My Request</button>
           <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("post")}>My Post</button>
-          <button className="btn btn-outline btn-sm">Resources</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("updateProfile")} >Profile Enhancement</button>
         </div>
       </div>
 
       {/* Posts Section */}
       <UserPost userPosts={userPosts} currentState={currentState} />
-      
+
       {/* User Request Page */}
       <UserRequest currentState={currentState} />
     </div>

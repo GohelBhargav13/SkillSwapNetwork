@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { postSchema } from "../../Validation/Validate.js";
 import { axiosInstance } from "../../libs/axios.js";
-import { Loader2, ImageIcon, X } from "lucide-react";
+import { ImageIcon, X, FileBadge2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const NewPostForm = () => {
@@ -72,12 +72,12 @@ const NewPostForm = () => {
   };
 
   return (
-    <div className="card bg-base-100 shadow-md border border-base-300/60 max-w-xl w-full mx-auto mt-20">
+    <div className="card bg-base-150 shadow-lg border border-base-300/60 max-w-xl w-full mx-auto mt-20 bg-gray-900">
       {/* Header: avatar + “Create a post” */}
       <div className="px-4 pt-4 flex items-center gap-3">
         <div className="avatar">
           <div className="w-10 rounded-full ring ring-primary/20 ring-offset-base-100 ring-offset-2">
-            <img src="https://placeimg.com/80/80/people" alt="avatar" />
+           <FileBadge2 className="flex w-10 h-8 mt-0.5" />
           </div>
         </div>
         <div>

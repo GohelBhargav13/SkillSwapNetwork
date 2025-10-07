@@ -12,10 +12,12 @@ import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 
 
-function PostView() {
+function PostView({curerntUser}) {
   const [loading, setLoading] = useState(false);
   const [posts, setPost] = useState([]);
   const [comment, setComment] = useState("");
+
+  console.log(curerntUser)
 
   useEffect(() => {
     let isMouted = true;
@@ -196,7 +198,7 @@ function PostView() {
             <div className="flex items-start gap-3">
               <div className="avatar">
                 <div className="w-8 h-8 rounded-full">
-                  <img src={post.postdBy.user_avatar} alt="me" />
+                  <img src={curerntUser.user_avatar} alt="me" />
                 </div>
               </div>
               <input

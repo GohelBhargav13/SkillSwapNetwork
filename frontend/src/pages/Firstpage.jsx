@@ -32,13 +32,15 @@ const Firstpage = () => {
                 <div className="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                   <img
                     src={
-                      authUser?.image || "https://placeimg.com/192/192/people"
+                      authUser?.image || "../assets/user.png"
                     }
                     alt="User avatar"
                   />
                 </div>
               </div>
+              <a className="cursor-pointer"  onClick={() => navigate("/profile")}>
               <h2 className="font-bold text-lg text-center">{authUser.name}</h2>
+              </a>
               <div className="text-sm text-gray-600 mb-2 text-center">
                 {authUser.headline}
               </div>
@@ -71,7 +73,7 @@ const Firstpage = () => {
         <main className="w-full flex flex-col gap-6 overflow-y-scroll h-[80vh] items-center">
           {/* Posts List Come from the Postview */}
           <div className="card bg-base-100 shadow p-5 w-full max-w-2xl">
-            <PostView />
+            <PostView curerntUser={authUser} />
           </div>
         </main>
 
