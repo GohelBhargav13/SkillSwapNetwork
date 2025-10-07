@@ -3,10 +3,12 @@ import { useAuthStore } from "../store/authStore.js";
 import { axiosInstance } from "../libs/axios.js";
 import UserPost from "./Post/UserPost.jsx";
 import { useNavigate } from "react-router-dom"
+import UserRequest from "./Post/UserRequest.jsx";
 
 const Profile = () => {
   const { authUser } = useAuthStore();
   const [userPosts, setUserPosts] = useState([]);
+  const [currentState,setCurrentState] = useState("post");
 
   const navigate = useNavigate();
 
@@ -49,14 +51,17 @@ const Profile = () => {
         </div>
         <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
           <button className="btn btn-primary" onClick={() => navigate("/create-post")}>Create Post</button>
-          <button className="btn btn-outline btn-sm">Add profile section</button>
-          <button className="btn btn-outline btn-sm">Enhance profile</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("request")}>My Request</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("post")}>My Post</button>
           <button className="btn btn-outline btn-sm">Resources</button>
         </div>
       </div>
 
       {/* Posts Section */}
-      <UserPost userPosts={userPosts} />
+      <UserPost userPosts={userPosts} currentState={currentState} />
+      
+      {/* User Request Page */}
+      <UserRequest currentState={currentState} />
     </div>
   );
 };

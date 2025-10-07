@@ -1,11 +1,12 @@
 import React from "react";
-import { Slash, Heart, MessageCircle, Repeat } from "lucide-react";
+import { Heart, MessageCircle, Repeat } from "lucide-react";
 
-const UserPost = ({ userPosts = [] }) => {
+const UserPost = ({ userPosts = [],currentState }) => {
   return (
-    <>
-      <div className="max-w-xl mx-auto my-8 space-y-6">
-        {userPosts.map((post) => (
+    <>  
+    <div className="overflow-x-auto py-4">
+      <div className="flex gap-6 w-[950px] px-5">
+        {currentState == "post" && userPosts.map((post) => (
           <div
             key={post.id}
             className="card bg-gray-900 shadow-sm border border-gray-700 rounded-xl overflow-hidden text-white"
@@ -41,6 +42,7 @@ const UserPost = ({ userPosts = [] }) => {
                   <img
                     src={post.post_images[0]}
                     alt="post"
+                    style={{"width":"100%","height":"100%"}}
                     className="rounded-lg w-full max-h-64 object-cover border border-gray-700"
                   />
                   {/* Multi-image indicator */}
@@ -99,6 +101,7 @@ const UserPost = ({ userPosts = [] }) => {
         {userPosts.length === 0 && (
           <div className="text-center text-gray-500 py-8">No posts yet.</div>
         )}
+      </div>
       </div>
     </>
   );
