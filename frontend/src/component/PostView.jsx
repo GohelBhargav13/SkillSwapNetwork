@@ -112,7 +112,7 @@ function PostView({curerntUser}) {
                     {post.postdBy.name}
                   </h3>
                   <p className="text-xs text-gray-500">
-                    Software Engineer • {post.postdAt.slice(0, 10)}
+                    Member • {post.postdAt.slice(0, 10)}
                   </p>
                 </div>
                 <div>

@@ -11,6 +11,7 @@ import Layout from "./layout/Layout";
 import Firstpage from "./pages/Firstpage";
 import PostCreate from "./pages/PostCreate";
 import UpdateProfile from "./pages/UpdateProfile";
+import RequestPost from "./pages/RequestPost";
 
 const App = () => {
 
@@ -40,6 +41,7 @@ const App = () => {
           <Route path="home" element={<Firstpage />} />
           <Route path="profile" element={<Profile />} />
           <Route path="create-post" element={<PostCreate />} />
+           <Route path="new-request" element={<RequestPost />} />
           <Route path="update-profile" element={<UpdateProfile /> } />
         </Route>
         {/* Redirect unknown routes */}

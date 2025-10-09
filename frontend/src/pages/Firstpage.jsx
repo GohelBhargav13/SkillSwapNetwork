@@ -3,8 +3,8 @@ import { useAuthStore } from "../store/authStore.js";
 import { userLeaderBoardStore } from "../store/leaderBoard.js";
 import LeaderBoard from "../component/Post/LeaderBoard.jsx";
 import PostView from "../component/PostView.jsx";
-import Button from "../component/StylesElements/Button.jsx";
 import { useNavigate } from "react-router";
+import { Plus,File } from "lucide-react"
 
 const Firstpage = () => {
 
@@ -63,7 +63,12 @@ const Firstpage = () => {
               </div>
               <div className="divider" />
               <a className="btn btn-primary" onClick={() => navigate("/create-post")}>
+                <File className="font-bold" />
                 <span>Create Post</span>
+              </a>
+               <a className="btn btn-primary" onClick={() => navigate("/new-request")}>
+                 <Plus className="font-bold" />
+                <span>New Request</span>
               </a>
             </div>
           </div>
