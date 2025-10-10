@@ -111,6 +111,15 @@ class ApiClient {
     });
   }
 
+  // Delete comment from the post
+  async deletePostComment(commentId,postId){
+    return this.customFetch(`/post/${commentId}/${postId}`,{
+      method:"DELETE",
+      headers: { "Content-Type": "application/json" },
+    })
+  }
+
+  //Create Post
   async CreatePost(title, desc, postImages) {
     const fb = new FormData();
     fb.append("title", title);

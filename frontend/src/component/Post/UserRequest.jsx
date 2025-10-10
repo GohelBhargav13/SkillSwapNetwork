@@ -1,10 +1,10 @@
-import React from 'react'
+import RequestPost from '../../pages/RequestPost.jsx'
 
 const UserRequest = ({currentState}) => {
   return (
     <>
         {currentState == "request" && (
-            <p className='font-bold text-black'>This is the request page</p>
+            <RequestPost />
         )
         }
     </>
