@@ -102,14 +102,14 @@ function PostView({curerntUser}) {
           <header className="flex items-start gap-4 p-4">
             <div className="avatar">
               <div className="w-12 h-12 rounded-full">
-                <img src={post.postdBy.user_avatar} alt="avatar" />
+                <img src={post.postdBy?.user_avatar ?? "https://static.vecteezy.com/system/resources/previews/046/010/545/non_2x/user-icon-simple-design-free-vector.jpg"} alt="avatar" />
               </div>
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-sm">
-                    {post.postdBy.name}
+                    {post.postdBy?.name}
                   </h3>
                   <p className="text-xs text-gray-500">
                     Member • {post.postdAt.slice(0, 10)}
@@ -186,10 +186,13 @@ function PostView({curerntUser}) {
           <div className="p-4 border-t">
             {post.post_comments?.map((comment, idx) => (
                 <div key={idx} className="mb-2">
+                <div className="flex flex-row gap-2">
+                <img src={comment.user?.user_avatar} width={27} height={20} className="rounded-full" />
                   <p className="font-semibold text-shadow-fuchsia-50 text-start">
-                    {comment.user}
+                    {comment.user?.name}
                   </p>
-                  <p className="text-sm text-shadow-fuchsia-50 text-start">{comment.text}</p>
+                  </div>
+                  <p className="text-sm text-shadow-fuchsia-50 text-start px-3 py-[2px]">{comment.text}</p>
                 </div>
             ))}
           </div>

@@ -16,15 +16,15 @@ const LeaderBoard = ({ isFetch, leaderBoardData }) => {
           {leaderBoardData.map((user, idx) => (
             <li
               key={user.name}
-              className="flex flex-row p-2 justify-between items-center px-2 py-1"
+              className="flex flex-row p-5 justify-between items-center px-4 py-1"
             >
               <span className="font-bold bg-accent px-5">{user.rank}</span>
               <img
-                src={user.image || "https://placeimg.com/192/192/people"}
+                src={user.user_avatar || "https://placeimg.com/192/192/people"}
                 alt="User avatar"
-                className="w-[40px] h-8 rounded-full"
+                className="w-[55px] h-11 rounded-full"
               />
-              <span className="font-bold px-5">{user.name}</span>
+              <span className="font-bold px-2">{user.name}</span>
               <span className="badge badge-primary">{user.token}</span>
             </li>
           ))}
