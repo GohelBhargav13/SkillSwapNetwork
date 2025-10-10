@@ -60,17 +60,14 @@ const Profile = () => {
         </div>
         <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
           <button className="btn btn-primary" onClick={() => navigate("/create-post")}>Create Post</button>
-          <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("request")}> <Reply className="font-bold w-4 h-4" /> My Request</button>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate("/new-request")}> <Reply className="font-bold w-4 h-4" /> My Request</button>
           <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("post")}> <File className="font-bold w-4 h-4" /> My Post</button>
           <button className="btn btn-primary btn-sm" onClick={() => navigate("/update-profile")}><Pencil className="font-bold w-4 h-4" /></button>
         </div>
       </div>
 
       {/* Posts Section */}
-      <UserPost userPosts={userPosts} currentState={currentState} />
-
-      {/* User Request Page */}
-      <UserRequest currentState={currentState} />
+      <UserPost userPosts={userPosts} currentState={currentState} authUserData={authUser} />
     </div>
   );
 };

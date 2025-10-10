@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import apiClient from "../services/apiClient";
 import { Swiper, SwiperSlide } from "swiper/react"; // fro the image sliding
 import { toast } from "react-hot-toast";
-import { Trash } from "lucide-react";
+import { Flag, Trash } from "lucide-react";
 import { axiosInstance } from "../libs/axios.js";
 
 // Import Swiper styles
@@ -17,6 +17,7 @@ function PostView({ curerntUser }) {
   const [loading, setLoading] = useState(false);
   const [posts, setPost] = useState([]);
   const [comment, setComment] = useState("");
+  const [showComment, SetShowComments] = useState(false);
 
   console.log(curerntUser);
 
@@ -197,51 +198,97 @@ function PostView({ curerntUser }) {
                   >
                     {`👍 Like    ${post.post_likes.length}`}
                   </button>
-                  <button className="btn btn-ghost btn-sm flex-1 rounded-md">
+                  <button
+                    className="btn btn-ghost btn-sm flex-1 rounded-md"
+                    onClick={() => SetShowComments((prev) => !prev)}
+                  >
                     💬 Comment
                   </button>
                 </div>
               </div>
               {/* Comments */}
-              <div className="p-4 border-t space-y-4">
-                {post.post_comments?.map((comment, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-2 group relative bg-gray-900 rounded-md pt-2 pb-3 px-3 shadow-md "
-                  >
-                    {/* Avatar & content */}
-                    <img
-                      src={comment.user?.user_avatar}
-                      alt="avatar"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 rounded-full object-cover mt-[2px] border"
-                    />
+              {post.post_comments.length > 0 ? (
+                <div className="p-4 border-t space-y-4">
+                  <div className="rounded-md text-center text-gray-500 text-lg font-semibold">{post.post_comments.length}{" "}Comment</div>
+                  {showComment &&
+                    post.post_comments?.map((comment, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-2 group relative bg-gray-900 rounded-md pt-2 pb-3 px-3 shadow-md "
+                      >
+                        {/* Avatar & content */}
+                        <img
+                          src={comment.user?.user_avatar}
+                          alt="avatar"
+                          width={32}
+                          height={32}
+                          className="w-8 h-8 rounded-full object-cover mt-[2px] border"
+                        />
 
-                    <div className="flex-1">
-                      {/* Name and trash icon in header row */}
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-semibold text-base-content/90 text-sm">
-                          {comment.user?.name}
-                        </span>
-                        {comment.user?._id === curerntUser?._id && (
-                          <button
-                            onClick={() => deleteComment(comment, post)}
-                            className="text-error hover:text-error-content p-1 transition-colors"
-                            title="Delete"
-                          >
-                            <Trash className="cursor-pointer" size={16} />
-                          </button>
-                        )}
+                        <div className="flex-1">
+                          {/* Name and trash icon in header row */}
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-semibold text-base-content/90 text-sm">
+                              {comment.user?.name}
+                            </span>
+                            {/* Dropdown menu */}
+                            <div className="dropdown dropdown-end">
+                              <button
+                                tabIndex={0}
+                                className="btn btn-ghost btn-xs px-1"
+                              >
+                                <svg
+                                  width="18"
+                                  height="18"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle cx="5" cy="12" r="2" />
+                                  <circle cx="12" cy="12" r="2" />
+                                  <circle cx="19" cy="12" r="2" />
+                                </svg>
+                              </button>
+                              <ul
+                                tabIndex={0}
+                                className="dropdown-content z-[1] menu p-1 shadow bg-base-100 rounded-box w-24"
+                              >
+                                {comment.user?._id === curerntUser?._id ? (
+                                  <li>
+                                    <button
+                                      onClick={() =>
+                                        deleteComment(comment, post)
+                                      }
+                                      className="text-error flex items-center gap-2"
+                                    >
+                                      <Trash size={14} /> Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  <li>
+                                    <button className="text-xs text-warning">
+                                      Report
+                                    </button>
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+                          </div>
+
+                          {/* Comment text underneath, full width */}
+                          <p className="text-sm text-base-content/80 mt-1">
+                            {comment.text}
+                          </p>
+                        </div>
                       </div>
-                      {/* Comment text underneath, full width */}
-                      <p className="text-sm text-base-content/80 mt-1">
-                        {comment.text}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="p-8 border rounded-md text-center text-gray-500 text-lg font-semibold">
+                  No comments yet.
+                </div>
+              )}
 
               {/* Comment preview / add comment area */}
               <div className="px-4 py-3 border-t">

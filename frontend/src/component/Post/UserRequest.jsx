@@ -1,12 +1,9 @@
 import RequestPost from '../../pages/RequestPost.jsx'
 
-const UserRequest = ({currentState}) => {
+const UserRequest = () => {
   return (
     <>
-        {currentState == "request" && (
             <RequestPost />
-        )
-        }
     </>
   )
 }

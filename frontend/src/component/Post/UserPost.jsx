@@ -1,7 +1,7 @@
 import React from "react";
 import { Heart, MessageCircle, Repeat } from "lucide-react";
 
-const UserPost = ({ userPosts = [],currentState }) => {
+const UserPost = ({ userPosts = [],currentState,authUserData }) => {
   return (
     <>  
     <div className="overflow-x-auto py-4">
@@ -64,12 +64,36 @@ const UserPost = ({ userPosts = [],currentState }) => {
                       <div className="mt-2 justify-start  ">
                         {post.post_comments.map((comment, index) => (
                           <div
-                            key={index}
-                            className="text-sm text-gray-300"
-                          >
-                          <p>{comment.user}</p>
-                            <p>{comment.text}</p>
+                        key={index}
+                        className="flex items-start gap-2 group relative rounded-md pt-2 pb-3 "
+                      >
+                        {/* Avatar & content */}
+                        <img
+                          src={comment.user?.user_avatar}
+                          alt="avatar"
+                          width={32}
+                          height={32}
+                          className="w-8 h-8 rounded-full object-cover mt-[2px] border"
+                        />
+
+                        <div className="flex-1">
+                          {/* Name and trash icon in header row */}
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-semibold text-base-content/90 text-sm">
+                              {comment.user?.name === authUserData.name ? (
+                                <p>You</p>
+                              ): (
+                                <p>{comment.user?.name}</p>
+                              )}
+                            </span>
                           </div>
+
+                          {/* Comment text underneath, full width */}
+                          <p className="text-sm text-base-content/80 mt-1">
+                            {comment.text}
+                          </p>
+                        </div>
+                      </div>
                         ))}
                       </div>
                     </>
