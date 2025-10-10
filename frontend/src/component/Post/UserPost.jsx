@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Heart, MessageCircle, Repeat } from "lucide-react";
 
 const UserPost = ({ userPosts = [],currentState,authUserData }) => {
+  const [ShowComment,setShowComment] = useState(false);
   return (
     <>  
     <div className="overflow-x-auto py-4">
@@ -62,7 +63,7 @@ const UserPost = ({ userPosts = [],currentState,authUserData }) => {
                   {post.post_comments.length > 0 ? (
                     <>
                       <div className="mt-2 justify-start  ">
-                        {post.post_comments.map((comment, index) => (
+                        {ShowComment && post.post_comments.map((comment, index) => (
                           <div
                         key={index}
                         className="flex items-start gap-2 group relative rounded-md pt-2 pb-3 "
@@ -109,7 +110,9 @@ const UserPost = ({ userPosts = [],currentState,authUserData }) => {
                 <Heart className="w-4 h-4" /> Like
                   <span>{post.post_likes.length || 0}</span>
               </button>
-              <button className="btn btn-ghost btn-sm flex items-center gap-1 text-gray-400 hover:text-white">
+              <button className="btn btn-ghost btn-sm flex items-center gap-1 text-gray-400 hover:text-white"
+              onClick ={() => setShowComment((prev) => !prev)}
+              >
                 <MessageCircle className="w-4 h-4" /> Comment
                 <span>
                         {post.post_comments.length}

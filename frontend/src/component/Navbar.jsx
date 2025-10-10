@@ -57,7 +57,7 @@ const Navbar = () => {
             </a>
           </li>
           <li>
-            <a className="flex flex-col items-center">
+            <a className="flex flex-col items-center" onClick={() => Navigate("/requests")} >
               <span className="material-icons">Group</span>
             </a>
           </li>

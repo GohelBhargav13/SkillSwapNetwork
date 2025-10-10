@@ -3,7 +3,7 @@ import RequestPost from '../../pages/RequestPost.jsx'
 const UserRequest = () => {
   return (
     <>
-            <RequestPost />
+        <RequestPost />
     </>
   )
 }

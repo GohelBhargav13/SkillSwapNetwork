@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { AvailableSkills } from "../store/Skills.js"
 import { axiosInstance } from "../libs/axios.js"
+import toast from 'react-hot-toast'
 
 const RequestPost = () => {
 
@@ -9,32 +10,51 @@ const RequestPost = () => {
     const [AdditionalMessage,setAdditionalMessage] = useState("");
     const [userTitle,setUserTitle] = useState("")
 
-    const handleSubmit = (data) => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const data = {
+          title:userTitle,
+          wantSkills:userWantSkills,
+          offerSkills:userSkillTeach
+        }
+
         console.log("submit");
         console.log("data", data);
 
-      axiosInstance.post("/skillswap/createrequest",data)
+        try {
+
+        axiosInstance.post("/skillswap/createrequest",data)
         .then((res) => {
           console.log("Response Data is : ",res)
         })
         .catch((err) => {
           console.log("Error in this fetching data is : ",err)
         })
-
+          
+        } catch (error) {
+          console.log(error);
+          toast.error(error)
+        }finally{
+          setUserSkillTeach([]);
+          setAdditionalMessage("");
+          setUserWantSkills([]);
+          setUserTitle("");
+        }
     }
   return (
-    <form onSubmit={handleSubmit} className="card bg-base-100 p-6 max-w-md mx-auto space-y-4 rounded-lg shadow">
+    <form onSubmit={handleSubmit} className="card bg-base-100 p-6 max-w-md mx-auto space-y-4 rounded-lg shadow py-8 m-6">
       <h2 className="text-xl font-bold mb-4 text-primary">Request Skill Swap</h2>
 
       <div className='form-control'>
         <label className='label'>Enter a Title</label>
-        <input className='w-8 h-8'
-        value={userTitle}
 
+        <input className='w-8 h-8'
+        type='text'
+        value={userTitle}
         onChange={(e) => {
           setUserTitle(e.target.value)
         }}
-
          />
       </div>
 
@@ -64,7 +84,6 @@ const RequestPost = () => {
       <div className="form-control">
         <label className="label">Skills You Can Offer (optional)</label>
         <select
-          multiple
           className="select select-bordered"
           onChange={(e) => {
             if(e.target.value == "Select Skill") return
@@ -86,28 +105,9 @@ const RequestPost = () => {
           rows={4}
           value={AdditionalMessage}
           placeholder="Message (optional)"
-        />
-      </div>
-
-      <div className="form-control">
-        <label className="label">Availability</label>
-        <input
-          type="text"
-          className="input input-bordered"
-          placeholder="E.g., Weekends, evenings"
           onChange={(e) => setAdditionalMessage(e.target.value)}
         />
-      </div>
-
-       <div className="form-control">
-        <label className="label">For Meet</label>
-        <input
-          type="text"
-          className="input input-bordered"
-          placeholder="E.g., Email,Calls,Meeting Link"
-        />
-      </div>
-
+      </div>  
       <button type="submit" className="btn btn-primary w-full">Submit Request</button>
     </form>
   )
