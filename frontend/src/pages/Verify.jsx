@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../libs/axios.js";
 import toast from "react-hot-toast";
-import { Loader, X } from "lucide-react";
+import { Loader2} from "lucide-react";
 const Verify = () => {
   const { token } = useParams();
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
 
   // State For the verification
   const [isVerified, setIsVerified] = useState(false);
@@ -24,16 +24,16 @@ const Verify = () => {
         .then((res) => {
             if (res.data.StatusCode == 200) {
                 toast.success(res.data.data.message);
-                navigate("/login");
+                window.location.href="/login"
             } else {
                 toast.error("Please Try again");
-                navigate("/login");
+                window.location.href="/login"
             }
         })
         .catch((err) => {
             console.log("Error in Verify Email : ", err);
             toast.error(err || "Verification Failed");
-            navigate("/login");
+            window.location.href="/login"
         });
     } catch (error) {
       console.log("Catch Part Error : ", error);
@@ -46,7 +46,7 @@ const Verify = () => {
     <>
       {isVerified && (
         <span className="w-8 h-8 bg-gray-900">
-          <Loader className="animate-spin" /> Verification in Progress
+          <Loader2 className="animate-spin" /> Verification in Progress
         </span>
       )}
     </>
