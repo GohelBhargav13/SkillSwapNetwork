@@ -13,6 +13,7 @@ import PostCreate from "./pages/PostCreate";
 import UpdateProfile from "./pages/UpdateProfile";
 import RequestPost from "./pages/RequestPost";
 import AllRequests from "./component/Requests/AllRequests";
+import Verify from "./pages/Verify";
 
 const App = () => {
 
@@ -48,6 +49,7 @@ const App = () => {
         </Route>
         {/* Redirect unknown routes */}
         <Route path="*" element={<Navigate to={authUser ? "/home" : "/login"} />} />
+        <Route path="verify-email/:token" element={<Verify />} />
       </Routes>
     </div>
   );

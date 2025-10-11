@@ -27,6 +27,7 @@ const RequestPost = () => {
         axiosInstance.post("/skillswap/createrequest",data)
         .then((res) => {
           console.log("Response Data is : ",res)
+          toast.success(res.data.message)
         })
         .catch((err) => {
           console.log("Error in this fetching data is : ",err)
