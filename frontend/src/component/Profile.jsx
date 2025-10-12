@@ -28,7 +28,7 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto bg-gray-600 rounded-md shadow-md overflow-hidden mt-[35px]">
+    <div className="min-h-[85vh] max-w-5xl mx-auto bg-gray-600 rounded-md shadow-md overflow-hidden mt-[35px]">
       {/* Cover */}
       <div className="relative h-48 bg-black">
         <img
@@ -49,7 +49,7 @@ const Profile = () => {
       </div>
 
       {/* Info + Actions */}
-      <div className="px-16 pt-16 pb-6 flex flex-col md:flex-row md:items-center md:justify-between border-b border-gray-200">
+      <div className="px-16 pt-16 pb-6  flex flex-col md:flex-row md:items-center md:justify-between border-b border-gray-200">
         <div>
           <h1 className="text-3xl font-bold text-zinc-200">{authUser.name}</h1>
           {/* <p className="text-gray-600 text-lg mt-1">{authUser.pronouns}</p> */}

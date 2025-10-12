@@ -53,7 +53,7 @@ const AllRequests = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center">
+    <div className="min-h-[89.8vh] bg-gray-900 flex flex-col items-center justify-center">
       {allRequests.length === 0 ? (
         <div className="text-center py-10 text-gray-400 text-lg">
           No skill swap requests found.
