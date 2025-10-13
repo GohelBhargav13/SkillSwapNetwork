@@ -42,13 +42,13 @@ const Firstpage = () => {
               <h2 className="font-bold text-lg text-center">{authUser.name}</h2>
               </a>
               <div className="text-sm text-gray-600 mb-2 text-center">
-                {authUser.headline}
+                {authUser?.headline}
               </div>
               <div className="text-xs text-gray-500 text-center">
-                {authUser.location}
+                {authUser?.location}
               </div>
               <div className="badge badge-outline badge-primary mt-2">
-                {authUser.university}
+                {authUser?.university}
               </div>
             </div>
             <div className="divider" />

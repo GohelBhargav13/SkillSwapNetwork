@@ -12,6 +12,7 @@ import "swiper/css/navigation";
 
 // Import required modules
 import { Pagination, Navigation } from "swiper/modules";
+import { socket } from "../Server.js";
 
 function PostView({ curerntUser }) {
   const [loading, setLoading] = useState(false);
@@ -42,31 +43,53 @@ function PostView({ curerntUser }) {
       }
     };
     getPostData();
+    
+    // Listen of the UpdateLike
+    socket.on("LikeUpdate", ({ postId, likeCount, message }) => {
+      console.log({postId, likeCount, message})
+      setPost((prevPost) => prevPost.map((post) => post._id === postId ? { ...post, post_likes: likeCount } : post));
+      if (message) toast.success(message);
+    });
+
+    // Listen of the error from socket
+    socket.on("errorPostLike", ({ message }) => {
+      if (message) toast.error(message);
+    });
 
     return () => {
       isMouted = false;
+      socket.off("LikeUpdate");
+      socket.off("errorPostLike");
     };
   }, []);
 
   //Like Post Function
-  const likePost = async ({ _id }) => {
-    try {
-      const response = await apiClient.likePost(_id);
-      console.log(response);
+  // const likePost = async ({ _id }) => {
+  //   try {
+  //     const response = await apiClient.likePost(_id);
+  //     console.log(response);
 
-      if (response.StatusCode >= 400) {
-        console.log(response.Message);
-        toast.error(response.Message);
-        return;
-      } else {
-        console.log(response.message);
-        toast.success(response.message);
-        return;
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error(error.message || "Error in Post Fetching");
-    }
+  //     if (response.StatusCode >= 400) {
+  //       console.log(response.Message);
+  //       toast.error(response.Message);
+  //       return;
+  //     } else {
+  //       console.log(response.message);
+  //       toast.success(response.message);
+  //       return;
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error(error.message || "Error in Post Fetching");
+  //   }
+  // };
+
+
+  // Like Post Event occuring
+  const handlePostLike = (postId, userId) => {
+    console.log({ postId, userId });
+    socket.emit("likePost", { postId, userId });
+    console.log("Like Post Event Emitting");
   };
 
   //comment Post Function
@@ -194,9 +217,9 @@ function PostView({ curerntUser }) {
                 <div className="flex items-center justify-between">
                   <button
                     className="btn btn-ghost btn-sm flex-1 rounded-md"
-                    onClick={() => likePost(post)}
+                    onClick={() => handlePostLike(post._id, curerntUser._id)}
                   >
-                    {`👍 Like    ${post.post_likes.length}`}
+                    {`👍 Like    ${typeof post.post_likes === "number" ? post.post_likes : post.post_likes.length}`}
                   </button>
                   <button
                     className="btn btn-ghost btn-sm flex-1 rounded-md"
@@ -209,7 +232,9 @@ function PostView({ curerntUser }) {
               {/* Comments */}
               {post.post_comments.length > 0 ? (
                 <div className="p-4 border-t space-y-4">
-                  <div className="rounded-md text-center text-gray-500 text-lg font-semibold">{post.post_comments.length}{" "}Comment</div>
+                  <div className="rounded-md text-center text-gray-500 text-lg font-semibold">
+                    {post.post_comments.length} Comment
+                  </div>
                   {showComment &&
                     post.post_comments?.map((comment, idx) => (
                       <div
