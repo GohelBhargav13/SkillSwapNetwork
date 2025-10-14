@@ -3,7 +3,6 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import app from "./app.js";
 import Post from "./models/post.model.js";
-import uploadImageOnCloudinary from "./utills/cloudinary.js";
 import User from "./models/user.model.js";
 import SkillSwap from "./models/skillswap.model.js";
 import { skillStatus } from "./utills/constant.js";
@@ -193,10 +192,40 @@ async function requestAccepted(requestId, acceptUserId) {
       .populate("postUserId", "name user_avatar");
 
     await updatedpost.save(); // This is must remember for the save data in database
-    io.emit("requestAccepted", { updatedpost, message: "Request Accepted" });
+    io.emit("requestAccepted", { updatedpost, acceptUserId });
   } catch (error) {
     console.error(error);
     socket.emit("errorPostLike", { message: "Error while accepting request" });
+  }
+}
+
+async function inprogressPost(authUserData) {
+  const { _id } = authUserData;
+  try {
+    if (!_id) {
+      socket.emit("errorPostLike", { message: "User Not Found" });
+      return;
+    }
+
+    // find the post with the user_id and with status is in_progress
+    const posts = await SkillSwap.find({
+      postUserId: _id,
+      skillStatus: skillStatus.IN_PROGRESS,
+    });
+
+    if (posts.length === 0) {
+      socket.emit("errorPostLike", { message: "Post Is not Available" });
+      return;
+    }
+
+    socket.emit("inProgressPostFetch", {
+      posts,
+      message: "Post Fetched In_progress Successfully",
+    });
+  } catch (error) {
+    socket.emit("errorPostLike", {
+      message: "Internal Error in in_progress Post comment",
+    });
   }
 }
 
@@ -220,7 +249,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("acceptRequest", async ({ requestId, acceptUserId }) => {
-      await requestAccepted(requestId, acceptUserId);
+    await requestAccepted(requestId, acceptUserId);
+  });
+
+  socket.on("inProgressPost", async ({ authUserData }) => {
+    await inprogressPost(authUserData);
   });
 
   socket.on("disconnect", () => {
