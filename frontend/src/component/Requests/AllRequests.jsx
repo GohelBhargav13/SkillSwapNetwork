@@ -60,13 +60,6 @@ const AllRequests = () => {
     }
     try {
       setRequestLoading(true);
-      // const res = await axiosInstance.post(`/skillswap/${requestId}/accept`);
-      // if (res.data.StatusCode === 200) {
-      //   toast.success(res.data.message);
-      // } else {
-      //   toast.error(res.data.Message || "Unable to accept request");
-      // }
-
       // update the change of the accept request using socket.io
       socket.emit("acceptRequest",{ requestId,acceptUserId })
 
