@@ -5,6 +5,8 @@ import UserPost from "./Post/UserPost.jsx";
 import { useNavigate } from "react-router-dom"
 import UserRequest from "./Post/UserRequest.jsx";
 import { Pencil,File, Reply } from "lucide-react"
+import { LoaderIcon } from "react-hot-toast";
+import InProgress from "./Requests/InProgress.jsx";
 
 
 const Profile = () => {
@@ -63,11 +65,16 @@ const Profile = () => {
           <button className="btn btn-primary btn-sm" onClick={() => navigate("/new-request")}> <Reply className="font-bold w-4 h-4" /> My Request</button>
           <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("post")}> <File className="font-bold w-4 h-4" /> My Post</button>
           <button className="btn btn-primary btn-sm" onClick={() => navigate("/update-profile")}><Pencil className="font-bold w-4 h-4" /></button>
+           <button className="btn btn-primary btn-sm" onClick={() => setCurrentState("in_progressPost")}><LoaderIcon className="font-bold w-4 h-4" />In Progress</button>
         </div>
       </div>
 
       {/* Posts Section */}
       <UserPost userPosts={userPosts} currentState={currentState} authUserData={authUser} />
+
+    {/* In_progressPost */}
+    <InProgress currentState={currentState} authUserData={authUser} />
+
     </div>
   );
 };

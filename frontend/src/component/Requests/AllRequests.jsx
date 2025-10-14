@@ -10,6 +10,8 @@ const AllRequests = () => {
   const [RequestLoading, setRequestLoading] = useState(false);
   const { authUser } = useAuthStore(); 
 
+  console.log("Login user Id is : ", authUser?._id);
+
   useEffect(() => {
     // fetch the all request of the user show in the UI
     const fetchRequests = async () => {
@@ -34,9 +36,9 @@ const AllRequests = () => {
     })
 
     // Listen for the request is accepted
-    socket.on("requestAccepted",({updatedpost,message}) => {
+    socket.on("requestAccepted",({updatedpost,acceptUserId}) => {
         setAllRequests((prevRequestPost) => prevRequestPost.filter((post) => post?._id !== updatedpost?._id )) 
-        if(message) toast.success(message);
+        if(updatedpost?.acceptedUserId === authUser?._id) toast.success("Request Accepted")
     })
 
     // Listen for the error coming from the server

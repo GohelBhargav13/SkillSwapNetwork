@@ -7,9 +7,9 @@ const UserPost = ({ userPosts = [],currentState,authUserData }) => {
     <>  
     <div className="overflow-x-auto py-4">
       <div className="flex gap-6 w-[950px] px-5">
-        {currentState == "post" && userPosts.map((post) => (
+        {currentState === "post" && userPosts.map((post) => (
           <div
-            key={post.id}
+            key={post._id}
             className="card bg-gray-900 shadow-sm border border-gray-700 rounded-xl overflow-hidden text-white"
           >
             {/* Header: User avatar, name, meta */}
@@ -65,7 +65,7 @@ const UserPost = ({ userPosts = [],currentState,authUserData }) => {
                       <div className="mt-2 justify-start  ">
                         {ShowComment && post.post_comments.map((comment, index) => (
                           <div
-                        key={index}
+                        key={comment?._id}
                         className="flex items-start gap-2 group relative rounded-md pt-2 pb-3 "
                       >
                         {/* Avatar & content */}
