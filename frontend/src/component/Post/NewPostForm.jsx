@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,13 +6,14 @@ import { postSchema } from "../../Validation/Validate.js";
 import { axiosInstance } from "../../libs/axios.js";
 import { ImageIcon, X, FileBadge2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../../Server.js"
+import { useAuthStore } from "../../store/authStore.js"
 
 const NewPostForm = () => {
   const [PostImages, setPostImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
   // destructure form
   const {
     register,
@@ -42,6 +43,8 @@ const NewPostForm = () => {
         formData.append("post_images", file);
       });
 
+      console.log("data is here")
+
       // fetch the data from the backend
       axiosInstance
         .post("/post/createpost", formData)
@@ -54,6 +57,8 @@ const NewPostForm = () => {
           toast.error("Error in creating post");
           console.log("Error in fetching a data : ", err);
         });
+
+        
     } catch (error) {
       toast.error("This is error in the catch block");
       console.log("Error of the catch block : ", error);
@@ -72,7 +77,6 @@ const NewPostForm = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
     <div className="flex items-center justify-center min-h-[90vh] bg-gray-900">
       <div className="card w-full max-w-lg shadow-2xl border border-base-300/70 bg-gray-800 rounded-xl mx-auto">
         {/* Header */}
@@ -183,7 +187,6 @@ const NewPostForm = () => {
         </form>
       </div>
     </div>
-    </form>
   );
 };
 

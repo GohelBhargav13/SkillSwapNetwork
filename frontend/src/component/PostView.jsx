@@ -51,6 +51,28 @@ function PostView({ curerntUser }) {
       if (message) toast.success(message);
     });
 
+    socket.on("CommentUpdate",({ postId,Comment,commentCount,message }) => {
+      console.log({postId,Comment,commentCount,message})
+      setPost((prevpost) => prevpost.map((post) => post._id === postId ? {...post,post_comments:Comment.post_comments,commentCount:commentCount} : post))
+      if(message) { 
+        toast.success(message) 
+        setComment("") 
+      }
+    })
+
+    socket.on("commentDeleted",({postId,post,data_other,message}) => {
+        console.log({postId,post,data_other,message})
+          setPost((prevpost) => prevpost.map((postD) => postD?._id === postId ? {...postD,post_comments:post.post_comments} : postD) )
+        if(message) toast.success(message)
+    })
+
+    socket.on("NewPost",({post,postedBy,message}) => {
+      console.log({ post,postedBy,message })
+      setPost((prevPost) => [...prevPost,post])
+      if(message) toast.success(message);
+
+    })
+
     // Listen of the error from socket
     socket.on("errorPostLike", ({ message }) => {
       if (message) toast.error(message);
@@ -60,10 +82,34 @@ function PostView({ curerntUser }) {
       isMouted = false;
       socket.off("LikeUpdate");
       socket.off("errorPostLike");
+      socket.off("CommentUpdate");
+      socket.off("commentDeleted");
+      socket.off("NewPost");
     };
   }, []);
 
-  //Like Post Function
+  // Like Post Event occuring
+  const handlePostLike = (postId, userId) => {
+    console.log({ postId, userId });
+    socket.emit("likePost", { postId, userId });
+    console.log("Like Post Event Emitting");
+  };
+
+   // Comment Post Event occuring
+  const handlePostComment = (postId,comment,userId) => {
+    console.log({postId,comment,userId})
+    socket.emit("commentPost",{ postId,comment,userId});
+    console.log("Comment Post Event Emitting");
+  }
+
+  // Delete Comment Post Event Occuring
+  const handleDeleteComment = (commentId,postId) => {
+    console.log({commentId,postId})
+    socket.emit("deleteComment",{ commentId,postId })
+    console.log("Delete Comment On Post Event Emitting")
+  }  
+
+    //Like Post Function
   // const likePost = async ({ _id }) => {
   //   try {
   //     const response = await apiClient.likePost(_id);
@@ -84,49 +130,41 @@ function PostView({ curerntUser }) {
   //   }
   // };
 
-
-  // Like Post Event occuring
-  const handlePostLike = (postId, userId) => {
-    console.log({ postId, userId });
-    socket.emit("likePost", { postId, userId });
-    console.log("Like Post Event Emitting");
-  };
-
-  //comment Post Function
-  const commentPost = async ({ _id }, comment) => {
-    console.log({ _id, comment });
-    try {
-      const response = await apiClient.commentPost(_id, comment);
-      console.log(response);
-
-      if (response.StatusCode >= 400) {
-        toast.error(response.Message);
-        return;
-      } else {
-        toast.success(response.message);
-      }
-    } catch (error) {
-      toast.error(error.message || "Error in post Comment");
-      return;
-    }
-    setComment("");
-  };
-
   //delete Comment Function
-  const deleteComment = async ({ _id }, postData) => {
-    console.log("Getting into the Delete Comment");
-    try {
-      const res = await apiClient.deletePostComment(_id, postData?._id);
+   //comment Post Function
+  // const commentPost = async ({ _id }, comment) => {
+  //   console.log({ _id, comment });
+  //   try {
+  //     const response = await apiClient.commentPost(_id, comment);
+  //     console.log(response);
 
-      if (res.StatusCode < 400) {
-        toast.success(res.message);
-      } else {
-        toast.error(res.Message);
-      }
-    } catch (error) {
-      console.log("Internal Error in the deleting Comment");
-    }
-  };
+  //     if (response.StatusCode >= 400) {
+  //       toast.error(response.Message);
+  //       return;
+  //     } else {
+  //       toast.success(response.message);
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message || "Error in post Comment");
+  //     return;
+  //   }
+  //   setComment("");
+  // };
+  
+  // const deleteComment = async ({ _id }, postData) => {
+  //   console.log("Getting into the Delete Comment");
+  //   try {
+  //     const res = await apiClient.deletePostComment(_id, postData?._id);
+
+  //     if (res.StatusCode < 400) {
+  //       toast.success(res.message);
+  //     } else {
+  //       toast.error(res.Message);
+  //     }
+  //   } catch (error) {
+  //     console.log("Internal Error in the deleting Comment");
+  //   }
+  // };
   return (
     <div>
       {loading ? (
@@ -283,7 +321,7 @@ function PostView({ curerntUser }) {
                                   <li>
                                     <button
                                       onClick={() =>
-                                        deleteComment(comment, post)
+                                        handleDeleteComment(comment?._id,post?._id)
                                       }
                                       className="text-error flex items-center gap-2"
                                     >
@@ -332,7 +370,7 @@ function PostView({ curerntUser }) {
                   />
                   <button
                     className="btn btn-square w-[120px]"
-                    onClick={() => commentPost(post, comment)}
+                    onClick={() => handlePostComment(post._id,comment,curerntUser._id)}
                   >
                     comment
                   </button>

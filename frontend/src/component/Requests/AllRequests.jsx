@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../libs/axios.js";
 import { toast } from "react-hot-toast";
-import { StatusBadge } from "../../store/Skills.js";
 import { Loader2 } from "lucide-react";
-
+import { socket } from "../../Server.js"
+import { useAuthStore } from "../../store/authStore.js"
 const AllRequests = () => {
   const [allRequests, setAllRequests] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [RequestLoading, setRequestLoading] = useState(false);
+  const { authUser } = useAuthStore(); 
 
   useEffect(() => {
+    // fetch the all request of the user show in the UI
     const fetchRequests = async () => {
       try {
         setLoading(true);
@@ -22,21 +24,52 @@ const AllRequests = () => {
       }
     };
     fetchRequests();
+
+    // Listen for the new Request is Posted
+    socket.on("newRequest",({skillSwapReq,userPostInfo,message}) => {
+      // console.log({ skillSwapReq,message,userPostInfo })
+        const updatedData = {skillSwapReq,userPostInfo}
+        setAllRequests((prevRequestPost) => [...prevRequestPost,updatedData])
+        if(message) toast.success(message)
+    })
+
+    // Listen for the request is accepted
+    socket.on("requestAccepted",({updatedpost,message}) => {
+        setAllRequests((prevRequestPost) => prevRequestPost.filter((post) => post?._id !== updatedpost?._id )) 
+        if(message) toast.success(message);
+    })
+
+    // Listen for the error coming from the server
+    socket.on("errorPostLike",({message}) => {
+      if(message) toast.error(message)
+    })
+
+    // For socket clean up
+    return () => {
+      socket.off("newRequest");
+      socket.off("requestAccepted")
+      socket.off("errorPostLike")
+    }
+
   }, []);
 
-  const handleAccept = async (requestId) => {
+  const handleAccept = async (requestId,acceptUserId) => {
     if (!requestId) {
       toast.error("Invalid Choice");
       return;
     }
     try {
       setRequestLoading(true);
-      const res = await axiosInstance.post(`/skillswap/${requestId}/accept`);
-      if (res.data.StatusCode === 200) {
-        toast.success(res.data.message);
-      } else {
-        toast.error(res.data.Message || "Unable to accept request");
-      }
+      // const res = await axiosInstance.post(`/skillswap/${requestId}/accept`);
+      // if (res.data.StatusCode === 200) {
+      //   toast.success(res.data.message);
+      // } else {
+      //   toast.error(res.data.Message || "Unable to accept request");
+      // }
+
+      // update the change of the accept request using socket.io
+      socket.emit("acceptRequest",{ requestId,acceptUserId })
+
     } catch (error) {
       toast.error("Error while accepting request");
     } finally {
@@ -68,12 +101,12 @@ const AllRequests = () => {
             {/* Posted By */}
             <div className="flex items-center gap-3 mb-4">
               <img
-                src={request.postUserId?.user_avatar}
+                src={request.postUserId?.user_avatar || request.userPostInfo?.user_avatar} 
                 alt="User avatar"
                 className="w-10 h-10 rounded-full object-cover"
                 style={{ background: "#202132" }}
               />
-              <span className="font-semibold text-white text-base">{request.postUserId?.name}</span>
+              <span className="font-semibold text-white text-base">{request.postUserId?.name || request.userPostInfo?.name}</span>
               <span className={`badge border-green-500 text-green-400 bg-transparent px-4 py-2 ml-3 text-base font-normal rounded-md`}>
                 {request.skillStatus}
               </span>
@@ -120,7 +153,7 @@ const AllRequests = () => {
             </div>
             {/* Accept Button */}
             <button
-              onClick={() => handleAccept(request?._id)}
+              onClick={() => handleAccept(request?._id,authUser?._id)}
               disabled={RequestLoading}
               className="w-full py-3 rounded-md bg-[#23d196] text-white text-base font-semibold transition hover:bg-[#19ac7c]
                 disabled:pointer-events-none disabled:opacity-60"

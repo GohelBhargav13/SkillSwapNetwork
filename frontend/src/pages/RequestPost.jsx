@@ -1,13 +1,22 @@
-import React, { useState } from "react";
-import { AvailableSkills } from "../store/Skills.js";
-import { axiosInstance } from "../libs/axios.js";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { socket } from "../Server.js"
+import { useAuthStore } from "../store/authStore.js"
 
 const RequestPost = () => {
   const [userWantSkills, setUserWantSkills] = useState([]);
   const [userSkillTeach, setUserSkillTeach] = useState([]);
   const [AdditionalMessage, setAdditionalMessage] = useState("");
   const [userTitle, setUserTitle] = useState("");
+  const { authUser } = useAuthStore();
+
+  useEffect(() => {
+
+    socket.on("newRequest",({message}) => {
+         if(message) toast.success(message)
+    })
+
+  },[])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,15 +31,10 @@ const RequestPost = () => {
     console.log("data", data);
 
     try {
-      axiosInstance
-        .post("/skillswap/createrequest", data)
-        .then((res) => {
-          console.log("Response Data is : ", res);
-          toast.success(res.data.message);
-        })
-        .catch((err) => {
-          console.log("Error in this fetching data is : ", err);
-        });
+
+      // Emit the socket Event
+        socket.emit("newRequest",{ data,authUser })
+
     } catch (error) {
       console.log(error);
       toast.error(error);
