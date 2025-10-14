@@ -9,6 +9,7 @@ import {
 } from "../utills/mail.js";
 
 import uploadImageOnCloudinary from "../utills/cloudinary.js"
+import Post from "../models/post.model.js";
 
 export const registerUser = async (req, res) => {
   console.log(req.body);
@@ -160,7 +161,7 @@ export const getMe = async (req, res) => {
   const { id } = req.user;
   try {
     const user = await User.findById({ _id: id }).select(
-      "-_id -password -__v -createdAt -updatedAt -isVerified -isDisabled"
+      "-password -__v -createdAt -updatedAt -isVerified -isDisabled"
     );
     if (!user) {
       return res.status(404).json(new ApiError(404, "User not found"));
@@ -284,3 +285,51 @@ export const userLogout = async (req, res) => {
       );
   }
 };
+
+// find the user's post 
+export const FindUserPost = async (req,res) => {
+  const { id } = req.user
+  try {
+
+    if(!id){
+      return res.status(404).json(new ApiError(404,"Id Was not Found"))
+    }
+
+    const data = await Post.find({postdBy:id}).select("-_id -updatedAt -__v -posthash -createdAt")
+    .populate("postdBy","name user_avatar")
+    .populate("post_comments.user","name user_avatar")
+    console.log("All Data is : ",data)
+
+    if(!data){
+      return res.status(400).json(new ApiError(400,""))
+    }
+
+    res.status(200).json(new ApiResponse(200,data,"Post Fetched"))
+    
+  } catch (error) {
+    res.status(500).json(new ApiError(500,"Internal Error in post Fetch"))
+  }
+}
+
+// Find Me with the unique Style
+export const FindMeWithUniqueStyle = async (req,res) => {
+  const { name,userId } = req.params;
+  try {
+
+    if(!name || !userId){
+      return res.status(404).json(new ApiError(404,"Name or User Id was not found"))
+    }
+
+    // find the data from the name and the userId
+    const profileDetails = await User.findOne({name,_id:userId}).select("-_id -updatedAt -__v -password -createdAt")
+
+    if(!profileDetails){
+      return res.status(400).json(new ApiError(400,"404 Profile Not Found "))
+    }
+
+    res.status(200).json(new ApiResponse(200,profileDetails,"Profile Fetched"))
+    
+  } catch (error) {
+    res.status(500).json(new ApiError(500,"Intenal Error in Profile Fetch"))
+  }
+}
