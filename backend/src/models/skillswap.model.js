@@ -11,8 +11,12 @@ const SkillSwapSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
-    wantSkills:{ type:[String], trim:true,required:true },
-    offerSkills:{ type:[String],trim:true,required:true },
+    wantSkills:[
+        {type:String,trim:true,required:true}
+    ],
+    offerSkills:[
+        {type:String,trim:true,required:true}
+    ],
 
     skillStatus:{
         type:String,
@@ -23,7 +27,7 @@ const SkillSwapSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"
     },
-    images:{ type:[String] }
+    images:{ type:[String], required:false }
 
 },{ timestamps:true })
 
