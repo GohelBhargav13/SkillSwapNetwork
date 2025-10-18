@@ -14,24 +14,41 @@ const InProgress = ({ currentState, authUserData }) => {
 
       socket.on("inProgressPostFetch", ({ posts, message }) => {
         setInProgressPost(posts);
-        // if (message) toast.success(message);
         setIsLoading(false);
+        // if (message) toast.success(message);
       });
+
+      socket.on("RequestComplete",({ userId,postId,token,message }) => {
+          // change the state of the setPost
+          setInProgressPost((prevPost) => prevPost.filter((post) => post?._id !== postId && post?.postUserId !== userId));
+          console.log(token)
+          if(message) toast.success(message)
+      })
 
       socket.on("errorPostLike", ({ message }) => {
         if (message) toast.error(message);
       });
+      
     } catch (error) {
       setIsLoading(false);
       toast.error(error || "Error fetching in-progress posts");
+    }finally {
+      setIsLoading(false);
     }
 
     return () => {
       socket.off("inProgressPost");
       socket.off("inProgressPostFetch");
       socket.off("errorPostLike");
+      socket.off("RequestComplete")
     };
   }, []);
+
+  // handle the post complete logic of the in_progress post
+
+  const handlePostComplete = async (postId,userId,acceptedUserId) => {
+      socket.emit("requestPostComplete",{ postId,userId,acceptedUserId })
+  }
 
   if (isLoading) {
     return (
@@ -46,7 +63,7 @@ const InProgress = ({ currentState, authUserData }) => {
 
   return (
     <>
-      {currentState === "in_progressPost" && inProgressPost.length > 0 ? (
+      {currentState == "in_progressPost" && inProgressPost.length > 0 ? (
         <div
           className={`grid gap-4 p-3 ${
             inProgressPost.length > 2
@@ -137,7 +154,9 @@ const InProgress = ({ currentState, authUserData }) => {
                 </span>
 
                 <div className="flex gap-1">
-                  <button className="btn btn-xs btn-success text-white rounded-md hover:scale-105 transition">
+                  <button className="btn btn-xs btn-success text-white rounded-md hover:scale-105 transition"
+                  onClick={() => handlePostComplete(post?._id,authUserData?._id,post?.acceptedUserId)}
+                   >
                     Complete
                   </button>
                   <button className="btn btn-xs btn-error text-white rounded-md hover:scale-105 transition">
