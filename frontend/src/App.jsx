@@ -14,6 +14,8 @@ import UpdateProfile from "./pages/UpdateProfile";
 import RequestPost from "./pages/RequestPost";
 import AllRequests from "./component/Requests/AllRequests";
 import Verify from "./pages/Verify";
+import FourZeroFour from "./pages/FourZeroFour";
+import OtherUserProfile from "./pages/OtherUserProfile";
 
 const App = () => {
 
@@ -42,13 +44,15 @@ const App = () => {
         <Route path="/" element={authUser ? <Layout /> : <Navigate to="/login" />}>
           <Route path="home" element={<Firstpage />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="profile/:name/:id" element={ <OtherUserProfile /> } />
           <Route path="create-post" element={<PostCreate />} />
            <Route path="new-request" element={<RequestPost />} />
           <Route path="update-profile" element={<UpdateProfile /> } />
           <Route path="requests" element={<AllRequests />}/>
+          <Route path="404" element={<FourZeroFour /> } />
         </Route>
         {/* Redirect unknown routes */}
-        <Route path="*" element={<Navigate to={authUser ? "/home" : "/login"} />} />
+        <Route path="*" element={<Navigate to="/404" />} />
         <Route path="verify-email/:token" element={<Verify />} />
       </Routes>
     </div>

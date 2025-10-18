@@ -9,7 +9,7 @@ const UserPost = ({ userPosts = [],currentState,authUserData }) => {
       <div className="flex gap-6 w-[950px] px-5">
         {currentState === "post" && userPosts.map((post) => (
           <div
-            key={post._id}
+            key={post?._id}
             className="card bg-gray-900 shadow-sm border border-gray-700 rounded-xl overflow-hidden text-white"
           >
             {/* Header: User avatar, name, meta */}

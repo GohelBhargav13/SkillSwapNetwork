@@ -1,31 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { useAuthStore } from "../store/authStore.js";
-import { axiosInstance } from "../libs/axios.js";
-import UserPost from "./Post/UserPost.jsx";
+import { useState,useEffect } from "react";
+import UserPost from "../component/Post/UserPost";
+import { useAuthStore } from "../store/authStore.js"
 import { useNavigate, useParams } from "react-router-dom";
-import { Pencil, File, Reply } from "lucide-react";
-import { LoaderIcon } from "react-hot-toast";
-import InProgress from "./Requests/InProgress.jsx";
+import { axiosInstance } from "../libs/axios.js";
 
-const Profile = () => {
+const OtherUserProfile = () => {
   const { authUser } = useAuthStore();
   const [userPosts, setUserPosts] = useState([]);
-  const [currentState, setCurrentState] = useState("post");
+  const [userInfo, setUserInfo] = useState({});
+  const [currentState, setCurrentState] = useState("post")
 
   const navigate = useNavigate();
+  const params = useParams();
 
+  // check the user is click on profile or the other profile
   useEffect(() => {
+    const { name, id } = params;
+
+    if(authUser?._id === id){
+        return navigate("/profile")
+    }
     const fetchAllData = async () => {
       try {
-        const userPost = await axiosInstance.get(`/user/posts`);
-        console.log(userPost.data.data)
+        const userPost = await axiosInstance.get(`/user/posts/${id}`);
+        console.log(userPost.data.data);
         setUserPosts(userPost.data.data);
+
+        const userData = await axiosInstance.get(`/user/profile/${name}/${id}`);
+        console.log(userData.data.data);
+        setUserInfo(userData.data.data);
       } catch (error) {
         console.log("Error in the profile", error);
       }
     };
     fetchAllData();
-  }, [ navigate]);
+  }, [navigate, params]);
 
   return (
     <div className="min-h-[85vh] max-w-5xl mx-auto bg-gray-600 rounded-md shadow-md overflow-hidden mt-[35px]">
@@ -35,7 +44,7 @@ const Profile = () => {
           alt="Banner"
           className="w-full h-full object-cover"
           src={
-            authUser.bannerImage ||
+            userInfo.bannerImage ||
             "https://placehold.co/1200x200/000000/ffffff"
           }
         />
@@ -46,7 +55,7 @@ const Profile = () => {
               <img
                 alt="User avatar"
                 src={
-                  authUser.user_avatar ||
+                  userInfo.user_avatar ||
                   "https://placehold.co/128x128/cccccc/000000?text=User+avatar"
                 }
               />
@@ -60,7 +69,7 @@ const Profile = () => {
       <div className="px-16 pt-16 pb-6  flex flex-col md:flex-row md:items-center md:justify-between border-b border-gray-200">
         <div>
           <h1 className="text-3xl font-bold text-zinc-200">
-            {authUser.name || "Unknown"}
+            {userInfo.name || "Unknown"}
           </h1>
           {/* <p className="text-gray-600 text-lg mt-1">{authUser.pronouns}</p> */}
           <div className="flex flex-wrap items-center space-x-4 mt-1">
@@ -68,54 +77,16 @@ const Profile = () => {
           </div>
           {/* <p className="text-gray-600 mt-2">{authUser.location}</p> */}
         </div>
-        <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-          <button
-            className="btn btn-primary"
-            onClick={() => navigate("/create-post")}
-          >
-            Create Post
-          </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => navigate("/new-request")}
-          >
-            {" "}
-            <Reply className="font-bold w-4 h-4" /> My Request
-          </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => setCurrentState("post")}
-          >
-            {" "}
-            <File className="font-bold w-4 h-4" /> My Post
-          </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => navigate("/update-profile")}
-          >
-            <Pencil className="font-bold w-4 h-4" />
-          </button>
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => setCurrentState("in_progressPost")}
-          >
-            <LoaderIcon className="font-bold w-4 h-4" />
-            In Progress
-          </button>
-        </div>
       </div>
 
       {/* Posts Section */}
       <UserPost
         userPosts={userPosts}
         currentState={currentState}
-        authUserData={authUser}
+        authUserData={userInfo}
       />
-
-      {/* In_progressPost */}
-      <InProgress currentState={currentState} authUserData={authUser} />
     </div>
   );
 };
 
-export default Profile;
+export default OtherUserProfile;

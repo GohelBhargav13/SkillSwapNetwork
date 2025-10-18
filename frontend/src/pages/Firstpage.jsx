@@ -16,6 +16,12 @@ const Firstpage = () => {
   const { isFetch, LeaderBoardDataFetch, fetchLeaderBoard } =
     userLeaderBoardStore();
 
+    // fetch user profile with the all details
+    const fetchUserProfile = async() => {
+      navigate(`/profile`); 
+      return
+    }
+
   // fetch leaderboard data on component mount
   useEffect(() => {
     fetchLeaderBoard();
@@ -38,7 +44,7 @@ const Firstpage = () => {
                   />
                 </div>
               </div>
-              <a className="cursor-pointer"  onClick={() => navigate("/profile")}>
+              <a className="cursor-pointer" onClick={() => fetchUserProfile(authUser.name,authUser?._id)}>
               <h2 className="font-bold text-lg text-center">{authUser.name}</h2>
               </a>
               <div className="text-sm text-gray-600 mb-2 text-center">
