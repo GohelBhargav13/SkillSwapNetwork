@@ -311,17 +311,41 @@ export const FindUserPost = async (req,res) => {
   }
 }
 
-// Find Me with the unique Style
-export const FindMeWithUniqueStyle = async (req,res) => {
-  const { name,userId } = req.params;
+export const FindUserPostWithId = async (req,res) => {
+  const { id } = req.params;
   try {
 
-    if(!name || !userId){
+    if(!id){
+      return res.status(404).json(new ApiError(404,"Id Was not Found"))
+    }
+
+    const data = await Post.find({postdBy:id}).select("-_id -updatedAt -__v -posthash -createdAt")
+    .populate("postdBy","name user_avatar")
+    .populate("post_comments.user","name user_avatar")
+    console.log("All Data is : ",data)
+
+    if(!data){
+      return res.status(400).json(new ApiError(400,""))
+    }
+
+    res.status(200).json(new ApiResponse(200,data,"Post Fetched"))
+    
+  } catch (error) {
+    res.status(500).json(new ApiError(500,"Internal Error in post Fetch"))
+  }
+}
+
+// Find Me with the unique Style
+export const FindMeWithUniqueStyle = async (req,res) => {
+  const { name,id } = req.params;
+  try {
+
+    if(!name || !id){
       return res.status(404).json(new ApiError(404,"Name or User Id was not found"))
     }
 
     // find the data from the name and the userId
-    const profileDetails = await User.findOne({name,_id:userId}).select("-_id -updatedAt -__v -password -createdAt")
+    const profileDetails = await User.findOne({name,_id:id}).select("-_id -updatedAt -__v -password -createdAt")
 
     if(!profileDetails){
       return res.status(400).json(new ApiError(400,"404 Profile Not Found "))

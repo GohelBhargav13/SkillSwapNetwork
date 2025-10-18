@@ -7,18 +7,19 @@ import uploadImageOnCloudinary from "../utills/cloudinary.js";
 export const createPost = async (req, res) => {
   const { title, description, post_images } = req.body;
   try {
-
     console.log(req.body);
     // console.log("This is the original Print for the files",req.files);
 
     //multiple file handling with the multer middleware
     const finalCloudArray = [];
-    for(let file of req.files){
+    for (let file of req.files) {
       const cloudinaryResponse = await uploadImageOnCloudinary(file.path);
       finalCloudArray.push(cloudinaryResponse);
 
-      if(cloudinaryResponse === null){
-        return res.status(400).json(new ApiError(400,"No Cloudinary Response"));
+      if (cloudinaryResponse === null) {
+        return res
+          .status(400)
+          .json(new ApiError(400, "No Cloudinary Response"));
       }
     }
 
@@ -28,12 +29,12 @@ export const createPost = async (req, res) => {
     const newPost = await Post.create({
       title,
       description,
-      post_images:finalCloudArray,
-      postdBy:req.user.id,
+      post_images: finalCloudArray,
+      postdBy: req.user.id,
     });
 
     console.log(newPost);
-    
+
     if (!newPost) {
       return res.status(400).json(new ApiError(400, "Post Is Not Created"));
     }
@@ -59,7 +60,7 @@ export const createPost = async (req, res) => {
     // console.log(newPost.post_images.length)
 
     res
-      .status(201)  
+      .status(201)
       .json(new ApiResponse(201, { userFetched }, "Post Created Successfully"));
   } catch (error) {
     res.status(500).json(new ApiError(500, "Internal Error in Creating Post"));
@@ -117,7 +118,7 @@ export const likePost = async (req, res) => {
         .json(
           new ApiResponse(
             200,
-            { LikeCount: post.post_likes.length,post },
+            { LikeCount: post.post_likes.length, post },
             "Post Liked"
           )
         );
@@ -243,4 +244,35 @@ export const getPostById = async(req,res) => {
       .status(500)
       .json(new ApiError(500, "Internal Error in fetching post by Id"));
   }
-}
+};
+
+// delete Comment On Post
+export const deleteComment = async (req, res) => {
+  const { commentId, postId } = req.params;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(404).json(new ApiError(404, "Post Not Found"));
+    }
+
+    //  console.log("Before Delete", post.post_comments.length)
+    if (post.post_comments.length > 0) {
+      post.post_comments = post.post_comments.filter(
+        (comment) => comment?._id != commentId
+      );
+    } else {
+      return res.status(400).json(new ApiError(400, "No comment Found"));
+    }
+    await post.save();
+
+    // console.log("After Delete",post.post_comments.length)
+    res
+      .status(200)
+      .json(new ApiResponse(200, { post }, "Comment Deleted Successfully"));
+  } catch (error) {
+    res
+      .status(500)
+      .json(new ApiError(500, "Internal Error in deleting Comment"));
+  }
+};
