@@ -1,6 +1,9 @@
 import express from "express";
 import {
   changePassword,
+  FindMeWithUniqueStyle,
+  FindUserPost,
+  FindUserPostWithId,
   getMe,
   registerUser,
   resetPasswordRequest,
@@ -42,5 +45,10 @@ userRoutes.post(
 );
 
 userRoutes.get("/logout", IsLoggedIn, userLogout);
+
+// find the users post
+userRoutes.get("/posts",IsLoggedIn,FindUserPost)
+userRoutes.get("/profile/:name/:id",IsLoggedIn,FindMeWithUniqueStyle)
+userRoutes.get("/posts/:id",IsLoggedIn,FindUserPostWithId)
 
 export default userRoutes;

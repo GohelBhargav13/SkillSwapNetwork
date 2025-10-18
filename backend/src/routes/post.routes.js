@@ -2,6 +2,7 @@ import express from "express";
 import {
   commentPost,
   createPost,
+  deleteComment,
   deletePost,
   getAllPost,
   getPostById,
@@ -41,5 +42,6 @@ postRoutes.post(
 postRoutes.post("/updatepost/:postId", IsLoggedIn, updatePost);
 postRoutes.get("/getall", IsLoggedIn, getAllPost);
 postRoutes.get("/getpostbyid/:postId", IsLoggedIn, getPostById);
+postRoutes.delete("/:commentId/:postId",IsLoggedIn,deleteComment)
 
 export default postRoutes;

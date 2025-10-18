@@ -4,6 +4,7 @@ import {
   cancelRequest,
   createRequestPost,
   getAllRequestPost,
+  getInProgressRequestPost,
   getRequestPostById,
   requestAccept,
   requestComplete,
@@ -27,5 +28,6 @@ skillswapRoutes.get("/:postId", IsLoggedIn, getRequestPostById);
 skillswapRoutes.post("/:postId/accept", IsLoggedIn, requestAccept);
 skillswapRoutes.post("/:postId/complete", IsLoggedIn, requestComplete);
 skillswapRoutes.delete("/:postId/cancel", IsLoggedIn, cancelRequest);
+skillswapRoutes.get("/inProgress",IsLoggedIn,getInProgressRequestPost)
 
 export default skillswapRoutes;
