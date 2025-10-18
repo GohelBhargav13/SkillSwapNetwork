@@ -1,4 +1,3 @@
-
 import Post from "../models/post.model.js";
 import ApiError from "../utills/api-error.js";
 import ApiResponse from "../utills/api-response.js";
@@ -211,14 +210,19 @@ export const getAllPost = async (req, res) => {
   try {
     const posts = await Post.find()
       .select("-__v -updatedAt")
-      .populate("postdBy", "name user_avatar");
+      .populate("postdBy", "name user_avatar")
+      .populate("post_comments.user", "name user_avatar");
     if (posts.length === 0) {
       return res.status(400).json(new ApiError(400, "No Post Available"));
     }
 
-    res.status(200).json(new ApiResponse(200,{ posts },"Posts Fetched Successfully"))
+    res
+      .status(200)
+      .json(new ApiResponse(200, { posts }, "Posts Fetched Successfully"));
   } catch (error) {
-    res.status(500).json(new ApiError(500,"Internal Error in Fetching Posts "))
+    res
+      .status(500)
+      .json(new ApiError(500, "Internal Error in Fetching Posts "));
   }
 };
 
@@ -226,15 +230,17 @@ export const getAllPost = async (req, res) => {
 export const getPostById = async(req,res) => {
   const { postId } = req.params;
   try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(400).json(new ApiError(400, "Post is not Available"));
+    }
 
-      const post = await Post.findById(postId)
-      if(!post){
-        return res.status(400).json(new ApiError(400,"Post is not Available"))
-      }
-
-      res.status(200).json(new ApiResponse(200,{ post },"Post Fetched Successfully"))
-    
+    res
+      .status(200)
+      .json(new ApiResponse(200, { post }, "Post Fetched Successfully"));
   } catch (error) {
-      res.status(500).json(new ApiError(500,"Internal Error in fetching post by Id"))
+    res
+      .status(500)
+      .json(new ApiError(500, "Internal Error in fetching post by Id"));
   }
 }
