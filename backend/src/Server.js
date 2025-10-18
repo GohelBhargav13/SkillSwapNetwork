@@ -33,6 +33,7 @@ async function updateLikes(postId, userId, socket) {
 
       io.emit("LikeUpdate", {
         postId: post._id,
+        UserId:userId,
         likeCount: post.post_likes.length,
         message: "Post Liked",
       });
@@ -43,6 +44,7 @@ async function updateLikes(postId, userId, socket) {
       await post.save();
       io.emit("LikeUpdate", {
         postId: post._id,
+        UserId:userId,
         likeCount: post.post_likes.length,
         message: "Post DisLiked",
       });
@@ -75,6 +77,7 @@ async function updateComment(postId, comment, userId, socket) {
 
     io.emit("CommentUpdate", {
       postId: post._id,
+      UserId:userId,
       Comment: newComment,
       commentCount: newComment.post_comments.length,
       message: "Comment Successfully",
@@ -271,7 +274,6 @@ async function requestPostComplete(postId, userId, acceptedUserId, socket) {
       return;
     }
     console.log(message);
-    
     io.emit("RequestComplete", {
       userId: userId,
       postId: postId,
