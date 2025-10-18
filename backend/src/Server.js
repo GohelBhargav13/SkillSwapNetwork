@@ -199,7 +199,7 @@ async function requestAccepted(requestId, acceptUserId) {
   }
 }
 
-async function inprogressPost(authUserData) {
+async function inprogressPost(authUserData, socket) {
   const { _id } = authUserData;
   try {
     if (!_id) {
@@ -229,6 +229,63 @@ async function inprogressPost(authUserData) {
   }
 }
 
+// Request Complete Functionality completed with token Increment
+async function requestPostComplete(postId, userId, acceptedUserId, socket) {
+  try {
+    const post = await SkillSwap.findById(postId);
+
+    if (!post) {
+      socket.emit("errorPostLike", { message: "Post Not Found" });
+      return;
+    }
+
+    if (post.skillStatus !== skillStatus.IN_PROGRESS) {
+      socket.emit("errorPostLike", { message: "Post Already Completed" });
+      return;
+    }
+
+    //check only postedUser and acceptedUser only change the state of it
+    if (post.postUserId.toString() !== userId.toString()) {
+      socket.emit("errorPostLike", {
+        message: "You have not a Permission to Change the State of the Request",
+      });
+      return;
+    }
+
+    //update the skillstatus to complete and token increment +10
+    const user = await User.findById(userId);
+    if (!user) {
+      socket.emit("errorPostLike", { message: "User Not Found" });
+      return;
+    }
+
+    // Method that is increment the token of the post after completed post
+    const { success, message } = await user.incrementToken(
+      userId,
+      acceptedUserId,
+      postId
+    );
+
+    if (!success) {
+      socket.emit("errorPostLike", { message: "Post Data is Not Updated" });
+      return;
+    }
+    console.log(message);
+    
+    io.emit("RequestComplete", {
+      userId: userId,
+      postId: postId,
+      finalPost: message,
+      message: "Request Completed Successfully",
+    });
+  } catch (error) {
+    socket.emit("errorPostLike", {
+      message: "Internal Error in the request Post Completion",
+    });
+    return;
+  }
+}
+
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
@@ -253,8 +310,15 @@ io.on("connection", (socket) => {
   });
 
   socket.on("inProgressPost", async ({ authUserData }) => {
-    await inprogressPost(authUserData);
+    await inprogressPost(authUserData, socket);
   });
+
+  socket.on(
+    "requestPostComplete",
+    async ({ postId, userId, acceptedUserId }) => {
+      await requestPostComplete(postId, userId, acceptedUserId, socket);
+    }
+  );
 
   socket.on("disconnect", () => {
     console.log("Socket disconnected:", socket.id);
