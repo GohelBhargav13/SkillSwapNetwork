@@ -22,7 +22,7 @@ const InProgress = ({ currentState, authUserData }) => {
           // change the state of the setPost
           setInProgressPost((prevPost) => prevPost.filter((post) => post?._id !== postId && post?.postUserId !== userId));
           console.log(token)
-          if(message) toast.success(message)
+          if(authUserData?._id === userId && message) toast.success(message)
       })
 
       socket.on("errorPostLike", ({ message }) => {
