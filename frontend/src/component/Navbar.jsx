@@ -28,14 +28,14 @@ const Navbar = () => {
             className="w-8 h-8"
           />
         </a>
-        <input
+        {/* <input
           type="text"
           placeholder="Search"
           className="input input-bordered w-40 md:w-64 hidden sm:block"
         />
         <Button>
           <span className="font-bold text-white">Search</span>
-        </Button>
+        </Button> */}
       </div>
       
       {/* Mobile Hamburger */}

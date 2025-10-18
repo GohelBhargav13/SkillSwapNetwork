@@ -12,7 +12,7 @@ import Firstpage from "./pages/Firstpage";
 import PostCreate from "./pages/PostCreate";
 import UpdateProfile from "./pages/UpdateProfile";
 import RequestPost from "./pages/RequestPost";
-import AllRequests from "./component/Requests/AllRequests";
+import AllRequests  from "./component/Requests/AllRequests"
 import Verify from "./pages/Verify";
 import FourZeroFour from "./pages/FourZeroFour";
 import OtherUserProfile from "./pages/OtherUserProfile";

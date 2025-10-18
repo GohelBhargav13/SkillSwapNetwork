@@ -45,16 +45,16 @@ function PostView({ curerntUser }) {
     getPostData();
     
     // Listen of the UpdateLike
-    socket.on("LikeUpdate", ({ postId, likeCount, message }) => {
+    socket.on("LikeUpdate", ({ postId,UserId,likeCount, message }) => {
       console.log({postId, likeCount, message})
       setPost((prevPost) => prevPost.map((post) => post._id === postId ? { ...post, post_likes: likeCount } : post));
-      if (message) toast.success(message);
+      if (UserId === curerntUser?._id && message) toast.success(message);
     });
 
-    socket.on("CommentUpdate",({ postId,Comment,commentCount,message }) => {
+    socket.on("CommentUpdate",({ postId,UserId,Comment,commentCount,message }) => {
       console.log({postId,Comment,commentCount,message})
       setPost((prevpost) => prevpost.map((post) => post._id === postId ? {...post,post_comments:Comment.post_comments,commentCount:commentCount} : post))
-      if(message) { 
+      if(UserId === curerntUser?._id && message) { 
         toast.success(message) 
         setComment("") 
       }
@@ -255,7 +255,7 @@ function PostView({ curerntUser }) {
                 <div className="flex items-center justify-between">
                   <button
                     className="btn btn-ghost btn-sm flex-1 rounded-md"
-                    onClick={() => handlePostLike(post._id, curerntUser._id)}
+                    onClick={() => handlePostLike(post?._id, curerntUser?._id)}
                   >
                     {`👍 Like    ${typeof post.post_likes === "number" ? post.post_likes : post.post_likes.length}`}
                   </button>

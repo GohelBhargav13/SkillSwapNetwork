@@ -26,7 +26,7 @@ const InProgress = ({ currentState, authUserData }) => {
       })
 
       socket.on("errorPostLike", ({ message }) => {
-        if (message) toast.error(message);
+        if (message && message !== "Post Is not Available") toast.error(message);
       });
       
     } catch (error) {

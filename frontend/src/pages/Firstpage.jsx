@@ -5,6 +5,7 @@ import LeaderBoard from "../component/Post/LeaderBoard.jsx";
 import PostView from "../component/PostView.jsx";
 import { useNavigate } from "react-router";
 import { Plus,File } from "lucide-react"
+import { socket } from "../Server.js";
 
 const Firstpage = () => {
 
@@ -25,6 +26,15 @@ const Firstpage = () => {
   // fetch leaderboard data on component mount
   useEffect(() => {
     fetchLeaderBoard();
+
+    socket.on("RequestComplete",() => {
+      fetchLeaderBoard();
+    })
+
+    return () => {
+      socket.off("RequestComplete")
+    }
+
   }, [fetchLeaderBoard]);
 
   return (
