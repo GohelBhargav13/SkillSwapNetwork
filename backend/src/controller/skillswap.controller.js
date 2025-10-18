@@ -6,7 +6,7 @@ import { skillStatus } from "../utills/constant.js";
 
 //create a request post
 export const createRequestPost = async (req, res) => {
-  const { title, wantSkills, offerSkills, images } = req.body;
+  const { title, wantSkills, offerSkills } = req.body;
   try {
     const postUserId = req.user.id;
     //creating request Post
@@ -18,7 +18,7 @@ export const createRequestPost = async (req, res) => {
     });
 
     const user = await User.findById(postUserId).select(
-      "-_id -__v -createdAt -updatedAt -passwordResetToken -passwordResetTokenExpires -isVerified -isDisabled -role -email -password "
+      "-__v -createdAt -updatedAt -passwordResetToken -passwordResetTokenExpires -isVerified -isDisabled -role -email -password "
     );
     console.log(skillSwapReq);
 
@@ -50,7 +50,7 @@ export const getAllRequestPost = async (req, res) => {
     //getting the all post with status:OPEN
     const fetchAllPost = await SkillSwap.find({ skillStatus: skillStatus.OPEN })
       .populate("postUserId", "name user_avatar")
-      .select("-_id -__v -createdAt -updatedAt");
+      .select("-__v -createdAt -updatedAt");
     if (fetchAllPost.length === 0) {
       return res.status(400).json(new ApiError(400, "Post Are not Available"));
     }
@@ -75,7 +75,7 @@ export const getRequestPostById = async (req, res) => {
     //check if post is available or not
     const reqPost = await SkillSwap.findById(postId)
       .populate("postUserId", "name user_avatar")
-      .select("-_id -__v -createdAt -updatedAt");
+      .select("-__v -createdAt -updatedAt");
     if (!reqPost) {
       return res.status(400).json(new ApiError(400, "Post is not Found"));
     }
@@ -98,7 +98,7 @@ export const requestAccept = async (req, res) => {
     const post = await SkillSwap.findOne({
       _id: postId,
     })
-      .select("-_id -__v -createdAt -updatedAt")
+      .select("-__v -createdAt -updatedAt")
       .populate("postUserId", "name user_avatar");
 
     if (!post) {
@@ -112,10 +112,13 @@ export const requestAccept = async (req, res) => {
         .json(new ApiError(400, "This request Already Taken by someone"));
     }
 
+    console.log(post)
+    console.log(req.user.id.toString())
     //check the user itself cannot accept it's own request
     if(post.postUserId._id.toString() === req.user.id.toString()){
-      return res.status(400).json(new ApiError(400,"You Can You Accept Your Own Request"))
+      return res.status(400).json(new ApiError(400,"You Cannot Accept Your Own Request"))
     }
+
 
     //now update the status and accepted_id`
     const updatedpost = await SkillSwap.findByIdAndUpdate(
@@ -202,5 +205,30 @@ export const cancelRequest = async(req,res) => {
     
   } catch (error) {
       res.status(500).json(new ApiError(500,"Internal Error in canceling request"))
+  }
+}
+
+// get the post which with status of in_progress
+export const getInProgressRequestPost = async (req,res) => {
+  const { id } = req.user; 
+  try {
+      if(!id){
+        return res.status(404).json(new ApiError(404,"User Not Found"))
+      }
+
+      // find the post with the user_id and with status is in_progress
+    const posts =  await SkillSwap.find({
+        postUserId:id,
+        skillStatus:skillStatus.IN_PROGRESS
+      })
+
+      if(posts.length === 0){
+        return res.status(400).json(new ApiError(400,"No Post Available"))
+      }
+
+      res.status(200).json(new ApiResponse(200,posts,"Post Fetched with in_progress"))
+    
+  } catch (error) {
+      res.status(500).json(new ApiError(500,"Internal Error in fetching data of the in_progress"))
   }
 }
