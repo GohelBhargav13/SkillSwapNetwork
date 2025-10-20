@@ -24,13 +24,13 @@ export const sendEmail = async (options) => {
       port: 587,
       secure: false, // true for 465, false for other ports
       auth: {
-        user: process.env.SMTP_USER || '',
-        pass: process.env.SMTP_PASSWORD || '',
+        user: process.env.SMTP_USER || "",
+        pass: process.env.SMTP_PASSWORD || "",
       },
     });
 
     const mailConfig = {
-      from: process.env.SMTP_USER || '',
+      from:options.from || process.env.SMTP_USER  || "",
       to: options.email,
       subject: options.subject,
       text: emailText,
@@ -85,6 +85,26 @@ export const resetPasswordTemplate = (username, verifyURL) => {
       },
       outro:
         "If you did not request a password reset, no further action is required on your part.",
+    },
+  };
+};
+
+export const cancelRequestTemplate = (username) => {
+  return {
+    body: {
+      name: `${username} !`,
+      intro:
+        "Thanks for signing up for Mailgen. We're very excited to have you on board.",
+      action: {
+        instructions:
+          "To get started using Mailgen, please confirm your account below:",
+        button: {
+          color: "#22BC66", // Green like in screenshot
+          text: "Confirm your account",
+        },
+      },
+      outro:
+        "Need help, or have questions? Just reply to this email, we'd love to help.",
     },
   };
 };
