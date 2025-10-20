@@ -30,7 +30,7 @@ export const sendEmail = async (options) => {
     });
 
     const mailConfig = {
-      from:options.from || process.env.SMTP_USER  || "",
+      from: options.from || process.env.SMTP_USER || "",
       to: options.email,
       subject: options.subject,
       text: emailText,
@@ -89,22 +89,22 @@ export const resetPasswordTemplate = (username, verifyURL) => {
   };
 };
 
-export const cancelRequestTemplate = (username) => {
+export const cancelRequestTemplate = (Acceptedusername,PostedUserName) => {
   return {
     body: {
-      name: `${username} !`,
-      intro:
-        "Thanks for signing up for Mailgen. We're very excited to have you on board.",
+      name: `${Acceptedusername} !`,
+      intro: `We wanted to let you know that ${PostedUserName} has cancelled the request.`,
       action: {
         instructions:
-          "To get started using Mailgen, please confirm your account below:",
+          "No action is required from your side. If you’d like to connect again or find another match, please visit your dashboard below:",
         button: {
-          color: "#22BC66", // Green like in screenshot
-          text: "Confirm your account",
+          color: "#FF5C5C", // Red to indicate cancellation
+          text: "Go to Dashboard",
+          link: "http://localhost:5173/requests", // replace with your actual link
         },
       },
       outro:
-        "Need help, or have questions? Just reply to this email, we'd love to help.",
+        "If you have any questions or concerns, feel free to reach out to our support team anytime.",
     },
   };
 };
