@@ -6,6 +6,7 @@ import Post from "./models/post.model.js";
 import User from "./models/user.model.js";
 import SkillSwap from "./models/skillswap.model.js";
 import { skillStatus } from "./utills/constant.js";
+import { cancelRequestTemplate, sendEmail } from "./utills/mail.js";
 
 dotenv.config();
 
@@ -33,7 +34,7 @@ async function updateLikes(postId, userId, socket) {
 
       io.emit("LikeUpdate", {
         postId: post._id,
-        UserId:userId,
+        UserId: userId,
         likeCount: post.post_likes.length,
         message: "Post Liked",
       });
@@ -44,7 +45,7 @@ async function updateLikes(postId, userId, socket) {
       await post.save();
       io.emit("LikeUpdate", {
         postId: post._id,
-        UserId:userId,
+        UserId: userId,
         likeCount: post.post_likes.length,
         message: "Post DisLiked",
       });
@@ -77,7 +78,7 @@ async function updateComment(postId, comment, userId, socket) {
 
     io.emit("CommentUpdate", {
       postId: post._id,
-      UserId:userId,
+      UserId: userId,
       Comment: newComment,
       commentCount: newComment.post_comments.length,
       message: "Comment Successfully",
@@ -321,6 +322,89 @@ io.on("connection", (socket) => {
       await requestPostComplete(postId, userId, acceptedUserId, socket);
     }
   );
+
+  socket.on("requestPostCancel", async ({ postId, userId, acceptedUserId }) => {
+    try {
+      const post = await SkillSwap.findById(postId);
+      if (!post) {
+        socket.emit("errorPostLike", { message: "Post Not Found" });
+        return;
+      }
+
+      //check if the IN_PROGRESS than it make CANCEL
+      if (post.skillStatus !== skillStatus.IN_PROGRESS) {
+        socket.emit("errorPostLike", { message: "Request is not in progress" });
+        return;
+      }
+
+      // check only postedUser and acceptedUser only change the state of it
+      if (post.postUserId.toString() !== userId.toString()) {
+        socket.emit("errorPostLike", {
+          message: "You Have not Permission to change the status",
+        });
+        return;
+      }
+
+      // find the postedUser Email for parameter of the mail From
+      const postedUserEmail = await User.findById(post.postUserId).select("email");
+      if (!postedUserEmail) {
+        socket.emit("errorPostLike", { message: "Posted User Not Found" });
+        return;
+      }
+
+      // find the acceptedUser Email for mail
+      const acceptedUserEmail = await User.findById(acceptedUserId).select(
+        "email name"
+      );
+      if (!acceptedUserEmail) {
+        socket.emit("errorPostLike", { message: "Accepted User Not Found" });
+        return;
+      }
+
+      // give the response object of the both users
+
+      const response = {
+        postedUserEmail: postedUserEmail.email,
+        acceptedUserEmail: acceptedUserEmail.email,
+      };
+
+      console.log(response);
+
+      //update the status into cancel
+      post.skillStatus = skillStatus.CANCEL;
+      await post.save(); // saving a data in database
+
+      io.emit("requestPostCancelS", {
+        postId,
+        userId,
+        acceptedUserId,
+        message: "Request Cancelled Successfully",
+      });
+
+      // Send Email to the Accepteduser
+      const options = {
+        from: postedUserEmail.email,
+        email: acceptedUserEmail.email,
+        subject: "Request Cancel By Posted User",
+        mailgencontent: cancelRequestTemplate(acceptedUserEmail.name),
+      };
+
+
+      // Wrap into the try-catch Mail Sending....
+      try {
+        await sendEmail(options);
+        console.log("Cancel Request Email Sent Successfully");
+      } catch (error) {
+        console.log("Error in sending mail of the request cancel", error);
+      }
+
+    } catch (error) {
+      socket.emit("errorPostLike", {
+        message: "Internal Error in the request Post Cancel",
+      });
+      return;
+    }
+  });
 
   socket.on("disconnect", () => {
     console.log("Socket disconnected:", socket.id);
