@@ -112,13 +112,14 @@ export const requestAccept = async (req, res) => {
         .json(new ApiError(400, "This request Already Taken by someone"));
     }
 
-    console.log(post)
-    console.log(req.user.id.toString())
+    console.log(post);
+    console.log(req.user.id.toString());
     //check the user itself cannot accept it's own request
-    if(post.postUserId._id.toString() === req.user.id.toString()){
-      return res.status(400).json(new ApiError(400,"You Cannot Accept Your Own Request"))
+    if (post.postUserId._id.toString() === req.user.id.toString()) {
+      return res
+        .status(400)
+        .json(new ApiError(400, "You Cannot Accept Your Own Request"));
     }
-
 
     //now update the status and accepted_id`
     const updatedpost = await SkillSwap.findByIdAndUpdate(
@@ -140,7 +141,6 @@ export const requestAccept = async (req, res) => {
       .json(
         new ApiResponse(200, { updatedpost }, "Request Accepted Successfully")
       );
-
   } catch (error) {
     console.error(error);
     res
@@ -150,85 +150,161 @@ export const requestAccept = async (req, res) => {
 };
 
 //request complete controller
-export const requestComplete = async(req,res) => {
-    const { postId } = req.params;
-    try {
-       const post = await SkillSwap.findById(postId);
-
-       if(!post){
-            return res.status(404).json(new ApiError(404,"Post not found"))
-       }
-
-       if(post.skillStatus !== skillStatus.IN_PROGRESS){
-            return res.status(400).json(new ApiError(400,"Post Is Already Completed"))
-       }
-
-       //check only postedUser and acceptedUser only change the state of it
-       if(post.postUserId.toString() !== req.user.id.toString()){
-          return res.status(400).json(new ApiError(400,"You Have Not Permission To Change request this Post"))
-       }
-
-       //update the skillstatus to complete and token increment +10
-       const user = await User.findById(req.user.id);
-       if(!user){
-        return res.status(404).json(new ApiError(404,"User Not Found"))
-       }
-
-        return res.status(200).json(new ApiResponse(200,{ result: await user.incrementToken(post.postUserId, post.acceptedUserId, postId) },"Request Updated Successfully"))
-        
-    } catch (error) {
-        res.status(500).json(new ApiError(500,"Internal Error in complete Request"))
-    }
-}
-
-//cancel Request controller
-export const cancelRequest = async(req,res) => {
+export const requestComplete = async (req, res) => {
   const { postId } = req.params;
   try {
+    const post = await SkillSwap.findById(postId);
 
-      const post = await SkillSwap.findById(postId);
-      if(!post){
-          return res.status(404).json(new ApiError(400,"Post not found"))
-      }
+    if (!post) {
+      return res.status(404).json(new ApiError(404, "Post not found"));
+    }
 
-      //check if the IN_PROGRESS than it make CANCEL
-      if(post.skillStatus !== skillStatus.IN_PROGRESS){
-        return res.status(400).json(new ApiError(500,"This Request is Not Cancel because of not in in_progress"))
-      }
+    if (post.skillStatus !== skillStatus.IN_PROGRESS) {
+      return res
+        .status(400)
+        .json(new ApiError(400, "Post Is Already Completed"));
+    }
 
+    //check only postedUser and acceptedUser only change the state of it
+    if (post.postUserId.toString() !== req.user.id.toString()) {
+      return res
+        .status(400)
+        .json(
+          new ApiError(
+            400,
+            "You Have Not Permission To Change request this Post"
+          )
+        );
+    }
 
-      //update the status into cancel
-      post.skillStatus = skillStatus.CANCEL;
-      await post.save(); // saving a data in database
+    //update the skillstatus to complete and token increment +10
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json(new ApiError(404, "User Not Found"));
+    }
 
-      res.status(200).json(new ApiResponse(200,{ post },"Post Cancel Successfully"))
-    
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            result: await user.incrementToken(
+              post.postUserId,
+              post.acceptedUserId,
+              postId
+            ),
+          },
+          "Request Updated Successfully"
+        )
+      );
   } catch (error) {
-      res.status(500).json(new ApiError(500,"Internal Error in canceling request"))
+    res
+      .status(500)
+      .json(new ApiError(500, "Internal Error in complete Request"));
   }
-}
+};
+
+//cancel Request controller
+export const cancelRequest = async (req, res) => {
+  const { postId } = req.params;
+  try {
+    const post = await SkillSwap.findById(postId);
+    if (!post) {
+      return res.status(404).json(new ApiError(400, "Post not found"));
+    }
+
+    //check if the IN_PROGRESS than it make CANCEL
+    if (post.skillStatus !== skillStatus.IN_PROGRESS) {
+      return res
+        .status(400)
+        .json(
+          new ApiError(
+            500,
+            "This Request is Not Cancel because of not in in_progress"
+          )
+        );
+    }
+
+    // check only postedUser and acceptedUser only change the state of it
+    if (post.postUserId.toString() !== req.user.id.toString()) {
+      return res
+        .status(400)
+        .json(
+          new ApiError(
+            400,
+            "You Have Not Permission To Change request this Post"
+          )
+        );
+    }
+
+    // find the postedUser Email for parameter of the mail From
+    const postedUserEmail = await User.findById(post.postUserId).select(
+      "email"
+    );
+    if (!postedUserEmail) {
+      return res.status(404).json(new ApiError(404, "User Not Found"));
+    }
+
+    // find the acceptedUser Email for mail
+    const acceptedUserEmail = await User.findById(post.acceptedUserId).select(
+      "email"
+    );
+    if (!acceptedUserEmail) {
+      return res.status(404).json(new ApiError(404, "User Not Found"));
+    }
+
+    // give the response object of the both users
+
+    const response = {
+      postedUserEmail: postedUserEmail.email,
+      acceptedUserEmail: acceptedUserEmail.email,
+    };
+
+    console.log(response);
+
+    //update the status into cancel
+    post.skillStatus = skillStatus.CANCEL;
+    await post.save(); // saving a data in database
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, { post, response }, "Post Cancel Successfully")
+      );
+  } catch (error) {
+    res
+      .status(500)
+      .json(new ApiError(500, "Internal Error in canceling request"));
+  }
+};
 
 // get the post which with status of in_progress
-export const getInProgressRequestPost = async (req,res) => {
-  const { id } = req.user; 
+export const getInProgressRequestPost = async (req, res) => {
+  const { id } = req.user;
   try {
-      if(!id){
-        return res.status(404).json(new ApiError(404,"User Not Found"))
-      }
+    if (!id) {
+      return res.status(404).json(new ApiError(404, "User Not Found"));
+    }
 
-      // find the post with the user_id and with status is in_progress
-    const posts =  await SkillSwap.find({
-        postUserId:id,
-        skillStatus:skillStatus.IN_PROGRESS
-      })
+    // find the post with the user_id and with status is in_progress
+    const posts = await SkillSwap.find({
+      postUserId: id,
+      skillStatus: skillStatus.IN_PROGRESS,
+    });
 
-      if(posts.length === 0){
-        return res.status(400).json(new ApiError(400,"No Post Available"))
-      }
+    if (posts.length === 0) {
+      return res.status(400).json(new ApiError(400, "No Post Available"));
+    }
 
-      res.status(200).json(new ApiResponse(200,posts,"Post Fetched with in_progress"))
-    
+    res
+      .status(200)
+      .json(new ApiResponse(200, posts, "Post Fetched with in_progress"));
   } catch (error) {
-      res.status(500).json(new ApiError(500,"Internal Error in fetching data of the in_progress"))
+    res
+      .status(500)
+      .json(
+        new ApiError(500, "Internal Error in fetching data of the in_progress")
+      );
   }
-}
+};
