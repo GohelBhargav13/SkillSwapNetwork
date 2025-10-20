@@ -12,12 +12,16 @@ const InProgress = ({ currentState, authUserData }) => {
       setIsLoading(true);
       socket.emit("inProgressPost", { authUserData });
 
+      // Socket Listeners
+
+      // Socket for fetch the in-progress posts
       socket.on("inProgressPostFetch", ({ posts, message }) => {
         setInProgressPost(posts);
         setIsLoading(false);
         // if (message) toast.success(message);
       });
 
+      // Socket for the request complete
       socket.on("RequestComplete",({ userId,postId,token,message }) => {
           // change the state of the setPost
           setInProgressPost((prevPost) => prevPost.filter((post) => post?._id !== postId && post?.postUserId !== userId));
@@ -25,6 +29,14 @@ const InProgress = ({ currentState, authUserData }) => {
           if(authUserData?._id === userId && message) toast.success(message)
       })
 
+      // Socket for the request cancel
+      socket.on("requestPostCancelS", ({  postId,userId,acceptedUserId,message }) => {
+        // change the state of the post
+        setInProgressPost((prepost) =>  prepost.filter((post) => post?._id !== postId && post?.postUserId !== userId ))
+        if(authUserData?._id === userId && message) toast.success(message || "Request Canceled")
+      })
+
+      // Socket for error
       socket.on("errorPostLike", ({ message }) => {
         if (message && message !== "Post Is not Available") toast.error(message);
       });
@@ -37,17 +49,25 @@ const InProgress = ({ currentState, authUserData }) => {
     }
 
     return () => {
+      
+      // Socket Off Listeners
       socket.off("inProgressPost");
       socket.off("inProgressPostFetch");
       socket.off("errorPostLike");
-      socket.off("RequestComplete")
+      socket.off("RequestComplete");
+      socket.off("requestPostCancelS");
     };
   }, []);
 
   // handle the post complete logic of the in_progress post
-
   const handlePostComplete = async (postId,userId,acceptedUserId) => {
       socket.emit("requestPostComplete",{ postId,userId,acceptedUserId })
+  }
+
+  // handle the post cancel logic of the in_progress post  
+  const handlePostCancel = async (postId,userId,acceptedUserId) => {
+      socket.emit("requestPostCancel",{ postId,userId,acceptedUserId })
+
   }
 
   if (isLoading) {
@@ -159,7 +179,9 @@ const InProgress = ({ currentState, authUserData }) => {
                    >
                     Complete
                   </button>
-                  <button className="btn btn-xs btn-error text-white rounded-md hover:scale-105 transition">
+                  <button className="btn btn-xs btn-error text-white rounded-md hover:scale-105 transition"
+                  onClick={() => handlePostCancel(post?._id,authUserData?._id,post?.acceptedUserId)}
+                  >
                     Cancel
                   </button>
                 </div>
