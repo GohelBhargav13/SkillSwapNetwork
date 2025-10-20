@@ -289,42 +289,9 @@ async function requestPostComplete(postId, userId, acceptedUserId, socket) {
   }
 }
 
-io.on("connection", (socket) => {
-  console.log("Socket connected:", socket.id);
-
-  socket.on("likePost", async ({ postId, userId }) => {
-    await updateLikes(postId, userId, socket);
-  });
-
-  socket.on("commentPost", async ({ postId, comment, userId }) => {
-    await updateComment(postId, comment, userId, socket);
-  });
-
-  socket.on("deleteComment", async ({ commentId, postId }) => {
-    await deleteComment(commentId, postId, socket);
-  });
-
-  socket.on("newRequest", async ({ data, authUser }) => {
-    await newRequest(data, authUser);
-  });
-
-  socket.on("acceptRequest", async ({ requestId, acceptUserId }) => {
-    await requestAccepted(requestId, acceptUserId);
-  });
-
-  socket.on("inProgressPost", async ({ authUserData }) => {
-    await inprogressPost(authUserData, socket);
-  });
-
-  socket.on(
-    "requestPostComplete",
-    async ({ postId, userId, acceptedUserId }) => {
-      await requestPostComplete(postId, userId, acceptedUserId, socket);
-    }
-  );
-
-  socket.on("requestPostCancel", async ({ postId, userId, acceptedUserId }) => {
-    try {
+// Request Cancel Functionality
+async function requestPostCancel(postId, userId, acceptedUserId, socket) {
+     try {
       const post = await SkillSwap.findById(postId);
       if (!post) {
         socket.emit("errorPostLike", { message: "Post Not Found" });
@@ -346,7 +313,7 @@ io.on("connection", (socket) => {
       }
 
       // find the postedUser Email for parameter of the mail From
-      const postedUserEmail = await User.findById(post.postUserId).select("email");
+      const postedUserEmail = await User.findById(post.postUserId).select("email name");
       if (!postedUserEmail) {
         socket.emit("errorPostLike", { message: "Posted User Not Found" });
         return;
@@ -386,7 +353,7 @@ io.on("connection", (socket) => {
         from: postedUserEmail.email,
         email: acceptedUserEmail.email,
         subject: "Request Cancel By Posted User",
-        mailgencontent: cancelRequestTemplate(acceptedUserEmail.name),
+        mailgencontent: cancelRequestTemplate(acceptedUserEmail.name,postedUserEmail.name),
       };
 
 
@@ -404,6 +371,44 @@ io.on("connection", (socket) => {
       });
       return;
     }
+}
+
+io.on("connection", (socket) => {
+  console.log("Socket connected:", socket.id);
+
+  socket.on("likePost", async ({ postId, userId }) => {
+    await updateLikes(postId, userId, socket);
+  });
+
+  socket.on("commentPost", async ({ postId, comment, userId }) => {
+    await updateComment(postId, comment, userId, socket);
+  });
+
+  socket.on("deleteComment", async ({ commentId, postId }) => {
+    await deleteComment(commentId, postId, socket);
+  });
+
+  socket.on("newRequest", async ({ data, authUser }) => {
+    await newRequest(data, authUser);
+  });
+
+  socket.on("acceptRequest", async ({ requestId, acceptUserId }) => {
+    await requestAccepted(requestId, acceptUserId);
+  });
+
+  socket.on("inProgressPost", async ({ authUserData }) => {
+    await inprogressPost(authUserData, socket);
+  });
+
+  socket.on(
+    "requestPostComplete",
+    async ({ postId, userId, acceptedUserId }) => {
+      await requestPostComplete(postId, userId, acceptedUserId, socket);
+    }
+  );
+
+  socket.on("requestPostCancel", async ({ postId, userId, acceptedUserId }) => {
+        await requestPostCancel(postId, userId, acceptedUserId, socket);
   });
 
   socket.on("disconnect", () => {
