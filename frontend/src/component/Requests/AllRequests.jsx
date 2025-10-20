@@ -24,7 +24,8 @@ const AllRequests = () => {
         setAllRequests(res.data.data.fetchAllPost);
         setFilteredData(res.data.data.fetchAllPost);
       } catch (error) {
-        toast.error("Failed to load requests.");
+        // toast.error("Failed to load requests.");
+        console.log("Failed to load requests.", error);
       } finally {
         setLoading(false);
       }
@@ -78,6 +79,7 @@ const AllRequests = () => {
     }
   };
 
+  // handle search function for find the data
   const handleSearch = (title) => {
     if (title === "") {
       setFilteredData(allRequests);
@@ -87,6 +89,7 @@ const AllRequests = () => {
     const filterdData = allRequests.filter((req) =>
       req.title.toLowerCase().includes(title.toLowerCase())
     );
+    if(filterdData.length === 0) return toast.success("No Requests Are Available")
     setFilteredData(filterdData);
   };
 
@@ -120,7 +123,7 @@ const AllRequests = () => {
         </button>
       </div>
 
-      {search && filterdData.length === 0 ? (
+      {!search && filterdData.length === 0 ? (
         <div className="text-center py-10 text-gray-400 text-lg">
           No skill swap requests found.
         </div>
